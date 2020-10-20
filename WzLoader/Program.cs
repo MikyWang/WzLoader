@@ -9,17 +9,14 @@ namespace WzLoader
         static void Main(string[] args)
         {
             var structure = WzLoader.Instance.Structure;
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            settings.ConformanceLevel = ConformanceLevel.Auto;
-            var xmlWriter = XmlWriter.Create("test.xml", settings);
 
             foreach (var node in structure.WzNode.Nodes)
             {
                 WzLoader.Instance.OutputNode(node);
+
             }
 
+            structure.Clear();
         }
     }
 }
