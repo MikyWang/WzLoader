@@ -32,8 +32,8 @@ namespace WzWeb.Server.Controllers
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
-            wzLoader.OutPutNode(null, logger);
-            logger.LogInformation("dadasd");
+            wzLoader.OutPutNode(wzLoader.HeadNode);
+            logger.LogInformation("sadad");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

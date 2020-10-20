@@ -23,8 +23,8 @@ namespace WzWeb.Server
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.AddDebug();
-                    //logging.AddConsole();
+                    //logging.AddDebug();
+                    logging.AddConsole();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

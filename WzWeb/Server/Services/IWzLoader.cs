@@ -5,6 +5,7 @@ namespace WzWeb.Server.Services
 {
     public interface IWzLoader
     {
-        public void OutPutNode(Wz_Node wz_Node, ILogger logger);
+        public Wz_Node HeadNode { get; }
+        public void OutPutNode(Wz_Node wz_Node);
     }
 }
