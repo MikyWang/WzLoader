@@ -8,13 +8,16 @@ namespace WzLoader
 {
     class WzLoader
     {
+        //private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
+        private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
+
         private static WzLoader instance = new WzLoader();
         public static WzLoader Instance => instance;
         public Wz_Structure Structure { get; private set; }
         private WzLoader()
         {
             Structure = new Wz_Structure();
-            Structure.Load(@"D:\文档\WzFile\Base.wz");
+            Structure.Load(FILEPATH);
         }
 
         public void OutputNode(Wz_Node wz_Node)
