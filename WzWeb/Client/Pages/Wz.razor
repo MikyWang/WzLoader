@@ -13,9 +13,10 @@ else
             <li class="breadcrumb-item active" aria-current="page">@node.Text</li>
         </ol>
     </nav>
+
     @if (node.Type == NodeType.Wz_File)
     {
-
+        <FileTable CurrentNode=@node></FileTable>
     }
 
 

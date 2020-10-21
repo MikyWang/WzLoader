@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+
 namespace WzWeb.Shared
 {
     public class FileInfo

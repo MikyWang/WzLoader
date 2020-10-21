@@ -1,33 +1,33 @@
 ﻿@using WzWeb.Shared
 @inject HttpClient Http
 
-
 @if (fileInfo == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <div class="card">
-        <div class="card-header">
-            Featured
-        </div>
-        <div class="card-body">
-            <h class="card-title">节点信息</h>
-            <p class="card-text"></p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-    </div>
+    <h4 class="mb-3">文件信息</h4>
+    <dl>
+        <dt class="border d-flex">基本信息</dt>
+        <dd class="border">@fileInfo.Signature</dd>
+    </dl>
+
+
 }
 
 @code {
 
-    private FileInfo fileInfo;
-    private Node node;
+    [Parameter]
+    public Node CurrentNode { get; set; }
 
-    private async Task GetFileInfo()
+    private FileInfo fileInfo;
+
+    protected override async Task OnInitializedAsync()
     {
-        fileInfo = await Http.GetFromJsonAsync<FileInfo>("Maple/GetFileInfo");
+
+        var resp = await Http.PostAsJsonAsync<Node>("Maple/GetFileInfo", CurrentNode);
+        fileInfo = await resp.Content.ReadFromJsonAsync<FileInfo>();
     }
 
 }
