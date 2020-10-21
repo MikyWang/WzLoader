@@ -1,0 +1,18 @@
+﻿@page "/wz"
+@using WzWeb.Shared
+@inject HttpClient Http
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">@node.Text</li>
+    </ol>
+</nav>
+
+@code {
+    private Node node = new Node();
+
+    protected override async Task OnInitializedAsync()
+    {
+        node = await Http.GetFromJsonAsync<Node>("Maple");
+    }
+}

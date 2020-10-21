@@ -1,13 +1,17 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using WzLib;
+using WzWeb.Server.Extentions;
+using WzWeb.Shared;
 
 namespace WzWeb.Server.Services
 {
     public class WzLoader : IWzLoader
     {
         private readonly ILogger<WzLoader> logger;
-        private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
+        //private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
+        private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
+
 
         public Wz_Node HeadNode { get; private set; }
         public WzLoader(ILogger<WzLoader> logger)
@@ -18,9 +22,9 @@ namespace WzWeb.Server.Services
             HeadNode = wz_Structure.WzNode;
         }
 
-        public void OutPutNode(Wz_Node wz_Node)
+        public Node OutPutNode(Wz_Node wz_Node)
         {
-            logger.LogInformation(wz_Node.Text);
+            return wz_Node.ToNode();
         }
     }
 }

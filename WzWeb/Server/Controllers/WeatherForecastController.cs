@@ -13,7 +13,6 @@ namespace WzWeb.Server.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly IWzLoader wzLoader;
 
         private static readonly string[] Summaries = new[]
         {
@@ -22,18 +21,15 @@ namespace WzWeb.Server.Controllers
 
         private readonly ILogger<WeatherForecastController> logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IWzLoader wzLoader)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             this.logger = logger;
-            this.wzLoader = wzLoader;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
-            wzLoader.OutPutNode(wzLoader.HeadNode);
-            logger.LogInformation("sadad");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
