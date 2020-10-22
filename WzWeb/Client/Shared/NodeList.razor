@@ -1,0 +1,35 @@
+﻿@using WzWeb.Shared
+@inject HttpClient Http
+
+@if (nodes == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <h5 class="d-inline">子节点</h5>
+    <ul class="list-group overflow-auto" style="height:@(height)">
+        @foreach (var node in nodes)
+        {
+            <li class="list-group-item">
+                <a href="javascript:void(0)">@node.Text</a>
+            </li>
+        }
+    </ul>
+
+}
+
+@code{
+    [Parameter]
+    public Node CurrentNode { get; set; }
+
+    private string height = "850px";
+
+    private Node[] nodes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var resp = await Http.PostAsJsonAsync<Node>("Maple/GetNodeList", CurrentNode);
+        nodes = await resp.Content.ReadFromJsonAsync<Node[]>();
+    }
+}

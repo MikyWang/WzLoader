@@ -2,6 +2,7 @@
 using WzLib;
 using WzWeb.Shared;
 using System.Linq;
+using WzWeb.Server.Services;
 
 namespace WzWeb.Server.Extentions
 {
@@ -47,6 +48,19 @@ namespace WzWeb.Server.Extentions
                 TextEncoding = wz_File.TextEncoding.ToString(),
                 ImageCount = wz_File.ImageCount
             };
+        }
+
+        public static Wz_Node ToWzNode(this Node node, Wz_Node headNode)
+        {
+            var wz_Node = headNode.FindNodeByPath(node.FullPath);
+            if (wz_Node == null)
+            {
+                if (headNode.FullPath == node.FullPath)
+                {
+                    wz_Node = headNode;
+                }
+            }
+            return wz_Node;
         }
     }
 }

@@ -1,39 +1,41 @@
 ﻿@using WzWeb.Shared
 @inject HttpClient Http
 
+
+
 @if (fileInfo == null)
 {
-    <p><em>Loading...</em></p>
+    <Loading></Loading>
 }
 else
 {
+    <h5 class="d-inline">文件信息</h5>
     <dl class="row border">
-        <dt class="col-sm-5">Signature</dt>
-        <dd class="col-sm-7">@fileInfo.Signature</dd>
-        <dt class="col-sm-5">Copyright</dt>
-        <dd class="col-sm-7">@fileInfo.Copyright</dd>
-        <dt class="col-sm-5">DataSize</dt>
-        <dd class="col-sm-7">@fileInfo.DataSize</dd>
-        <dt class="col-sm-5">EncryptedVersion</dt>
-        <dd class="col-sm-7">@fileInfo.EncryptedVersion</dd>
-        <dt class="col-sm-5">FileName</dt>
-        <dd class="col-sm-7">@fileInfo.FileName</dd>
-        <dt class="col-sm-5">FileSize</dt>
-        <dd class="col-sm-7">@fileInfo.FileSize</dd>
-        <dt class="col-sm-5">HeaderSize</dt>
-        <dd class="col-sm-7">@fileInfo.HeaderSize</dd>
-        <dt class="col-sm-5">ImageCount</dt>
-        <dd class="col-sm-7">@fileInfo.ImageCount</dd>
-        <dt class="col-sm-5">TextEncoding</dt>
-        <dd class="col-sm-7">@fileInfo.TextEncoding</dd>
-        <dt class="col-sm-5">VersionChecked</dt>
-        <dd class="col-sm-7">@fileInfo.VersionChecked</dd>
+        @{
+            void RenderInfo(string name, object info)
+            {
+                <div class="col-sm-5">
+                    <dt> @name </dt>
+                </div>
+                <div class="col-sm-7">
+                    <dd class="text-break"> @info </dd>
+                </div>
+            }
 
-        @RenderInfo("test", "Value");
+            Type t = fileInfo.GetType();
+            var propertyList = t.GetProperties();
+            foreach (var item in propertyList)
+            {
+                RenderInfo(item.Name, item.GetValue(fileInfo));
+            }
+        }
+
+
     </dl>
 
 
 }
+
 
 
 @code {
@@ -43,6 +45,8 @@ else
 
     private FileInfo fileInfo;
 
+
+
     protected override async Task OnInitializedAsync()
     {
 
@@ -50,10 +54,7 @@ else
         fileInfo = await resp.Content.ReadFromJsonAsync<FileInfo>();
     }
 
-    private string RenderInfo(string name, string info)
-    {
-        return "<dt>@name</dt> <dd>@info</dd>";
-    }
+
 
 }
 

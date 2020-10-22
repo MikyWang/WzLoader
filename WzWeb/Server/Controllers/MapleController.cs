@@ -30,18 +30,17 @@ namespace WzWeb.Server.Controllers
             return wzLoader.OutPutNode(wzLoader.HeadNode);
         }
 
+        [HttpPost("GetNodeList")]
+        public IEnumerable<Node> GetNodeList(Node node)
+        {
+            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
+            return wz_Node.Nodes.Select(node => node.ToNode()).ToArray();
+        }
+
         [HttpPost("GetFileInfo")]
         public FileInfo GetFileInfo(Node node)
         {
-
-            var wz_Node = wzLoader.HeadNode.FindNodeByPath(node.FullPath);
-            if (wz_Node == null)
-            {
-                if (wzLoader.HeadNode.FullPath == node.FullPath)
-                {
-                    wz_Node = wzLoader.HeadNode;
-                }
-            }
+            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
             var wz_File = wz_Node.Value as Wz_File;
             return wz_File.GetFileInfo();
         }

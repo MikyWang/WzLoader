@@ -4,22 +4,30 @@
 
 @if (node == null)
 {
-    <p><em>Loading...</em></p>
+    <Loading></Loading>
 }
 else
 {
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">@node.Text</li>
-        </ol>
-    </nav>
-
-    @if (node.Type == NodeType.Wz_File)
-    {
-        <FileTable CurrentNode=@node></FileTable>
-    }
-
-
+    <div class="row">
+        <div class="col-sm-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">@node.Text</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <NodeList CurrentNode="@node"></NodeList>
+        </div>
+        @if (node.Type == NodeType.Wz_File)
+        {
+            <div class="col-sm-5">
+                <FileTable CurrentNode=@node></FileTable>
+            </div>
+        }
+    </div>
 }
 
 @code {
