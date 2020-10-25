@@ -9,7 +9,7 @@ namespace WzWeb.Shared
         public string Text { get; set; }
         public string Value { get; set; }
         public NodeType Type { get; set; }
-        public string FullPath { get; set; }
+        public string FullPathToFile { get; set; }
     }
 
     public enum NodeType

@@ -1,8 +1,9 @@
 ﻿using System;
 using WzLib;
 using WzWeb.Shared;
-using System.Linq;
 using WzWeb.Server.Services;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace WzWeb.Server.Extentions
 {
@@ -16,7 +17,7 @@ namespace WzWeb.Server.Extentions
                 ParentNode = wz_Node.ParentNode?.ToNode(),
                 Text = wz_Node.Text,
                 Value = wz_Node.Value?.ToString(),
-                FullPath = wz_Node.FullPath,
+                FullPathToFile = wz_Node.FullPathToFile,
                 Type = wz_Node.GetNodeType()
             };
         }
@@ -52,15 +53,53 @@ namespace WzWeb.Server.Extentions
 
         public static Wz_Node ToWzNode(this Node node, Wz_Node headNode)
         {
-            var wz_Node = headNode.FindNodeByPath(node.FullPath);
+            var wz_Node = headNode.SearchNode(node.FullPathToFile);
             if (wz_Node == null)
             {
-                if (headNode.FullPath == node.FullPath)
+                if (headNode.FullPathToFile == node.FullPathToFile)
                 {
                     wz_Node = headNode;
                 }
             }
             return wz_Node;
         }
+
+        public static Wz_Node SearchNode(this Wz_Node wz_Node, string fullPathToFile)
+        {
+            if (wz_Node.FullPathToFile == fullPathToFile) return wz_Node;
+            var pathes = fullPathToFile.Split('\\').ToList();
+            if (pathes[0] != "Base") pathes.Insert(0, "Base");
+            return SearchNode(wz_Node, pathes);
+
+        }
+
+        private static Wz_Node SearchNode(this Wz_Node wz_Node, List<string> pathes)
+        {
+            Wz_Node node;
+            pathes.RemoveAt(0);
+            if (pathes.Count == 0) return wz_Node;
+            node = wz_Node.FindNodeByPath(pathes[0]);
+            if (node == null)
+            {
+                var value = wz_Node.GetValue<Wz_Image>();
+                if (value != null)
+                {
+                    value.TryExtract();
+                    wz_Node = value.Node;
+                    node = wz_Node.FindNodeByPath(pathes[0]);
+                }
+            }
+            else
+            {
+                var value = node.GetValue<Wz_Image>();
+                if (value != null)
+                {
+                    value.TryExtract();
+                    node = value.Node;
+                }
+            }
+            return SearchNode(node, pathes);
+        }
+
     }
 }

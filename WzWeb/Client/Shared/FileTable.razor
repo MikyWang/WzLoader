@@ -9,31 +9,33 @@
 }
 else
 {
-    <h5 class="d-inline">文件信息</h5>
-    <dl class="row border">
-        @{
-            void RenderInfo(string name, object info)
-            {
-                <div class="col-sm-5">
-                    <dt> @name </dt>
-                </div>
-                <div class="col-sm-7">
-                    <dd class="text-break"> @info </dd>
-                </div>
-            }
+    <div class="card">
+        <div class="card-header">
+            <h5>文件信息</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                @{
+                    void RenderInfo(string name, object info)
+                    {
+                        <div class="col-sm-5">
+                            <dt> @name </dt>
+                        </div>
+                        <div class="col-sm-7">
+                            <dd class="text-break"> @info </dd>
+                        </div>
+                    }
 
-            Type t = fileInfo.GetType();
-            var propertyList = t.GetProperties();
-            foreach (var item in propertyList)
-            {
-                RenderInfo(item.Name, item.GetValue(fileInfo));
-            }
-        }
-
-
-    </dl>
-
-
+                    Type t = fileInfo.GetType();
+                    var propertyList = t.GetProperties();
+                    foreach (var item in propertyList)
+                    {
+                        RenderInfo(item.Name, item.GetValue(fileInfo));
+                    }
+                }
+            </dl>
+        </div>
+    </div>
 }
 
 

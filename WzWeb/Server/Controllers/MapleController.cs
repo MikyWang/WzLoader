@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using WzWeb.Server.Services;
 using WzLib;
 using WzWeb.Server.Extentions;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace WzWeb.Server.Controllers
 {
@@ -24,10 +25,12 @@ namespace WzWeb.Server.Controllers
             this.wzLoader = wzLoader;
         }
 
-        [HttpGet]
-        public Node Get()
+        [HttpGet("GetNode")]
+        public Node Get(string path)
         {
-            return wzLoader.OutPutNode(wzLoader.HeadNode);
+            var head = wzLoader.HeadNode;
+            var wz_node = head.SearchNode(path);
+            return wz_node.ToNode();
         }
 
         [HttpPost("GetNodeList")]
@@ -44,5 +47,6 @@ namespace WzWeb.Server.Controllers
             var wz_File = wz_Node.Value as Wz_File;
             return wz_File.GetFileInfo();
         }
+
     }
 }

@@ -7,15 +7,22 @@
 }
 else
 {
-    <h5 class="d-inline">子节点</h5>
-    <ul class="list-group overflow-auto" style="height:@(height)">
-        @foreach (var node in nodes)
-        {
-            <li class="list-group-item">
-                <a href="javascript:void(0)">@node.Text</a>
-            </li>
-        }
-    </ul>
+    <div class="card">
+        <div class="card-header">
+            <h5>子节点</h5>
+        </div>
+        <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
+            <div class="list-group list-group-flush">
+                @foreach (var node in nodes)
+                {
+                    <div class="list-group-item">
+                        <NodeLink CurrentNode="@node"></NodeLink>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
 
 }
 

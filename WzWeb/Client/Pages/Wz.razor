@@ -1,6 +1,8 @@
 ﻿@page "/wz"
 @using WzWeb.Shared
+@using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http
+@inject NavigationManager NavigationManager;
 
 @if (node == null)
 {
@@ -27,14 +29,39 @@ else
                 <FileTable CurrentNode=@node></FileTable>
             </div>
         }
+        @if (node.Type == NodeType.Wz_Normal)
+        {
+            <div class="col-sm-5">
+                <dl>
+                    <div class="col-sm-5">
+                        <dt> @node.Text </dt>
+                    </div>
+                    <div class="col-sm-7">
+                        <dd class="text-break"> @node.Value </dd>
+                    </div>
+                </dl>
+            </div>
+        }
     </div>
 }
 
 @code {
+
+    private string path;
+
     private Node node;
 
     protected override async Task OnInitializedAsync()
     {
-        node = await Http.GetFromJsonAsync<Node>("Maple");
+        var query = new Uri(NavigationManager.Uri).Query;
+
+        if (QueryHelpers.ParseQuery(query).TryGetValue("path", out var value))
+        {
+            path = value;
+        }
+
+        path = path ?? "Base";
+        node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
     }
+
 }
