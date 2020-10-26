@@ -9,14 +9,22 @@ else
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     @{
-                        var ext = "";
-                        @for (int i = 0; i < pathes.Length - 1; i++)
+                        var ext = "wz?path=";
+                        @for (int i = 0; i < pathes.Count - 1; i++)
                         {
-                            ext += pathes[i];
-                            <li class="breadcrumb-item"><a href="wz?path=@ext">@pathes[i]</a></li>
+                            var index = i;
+                            ext += pathes[index];
+                            <li class="breadcrumb-item">
+                                <HyperLink Link=@ext>
+                                    <Content>
+                                        @pathes[index]
+                                    </Content>
+                                </HyperLink>
+                            </li>
+
                             ext += @"\";
                         }
-                        <li class="breadcrumb-item active" aria-current="page">@pathes[pathes.Length - 1]</li>
+                        <li class="breadcrumb-item active" aria-current="page">@pathes[pathes.Count - 1]</li>
                     }
                 </ol>
             </nav>
@@ -29,13 +37,15 @@ else
     [Parameter]
     public string Path { get; set; }
 
-    private string[] pathes;
+    private List<string> pathes;
+    private Dictionary<string, string> linkDic = new Dictionary<string, string>();
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Run(() =>
         {
-            pathes = Path.Split('\\');
+            pathes = Path.Split('\\').ToList();
+            if (pathes[0] != "Base") pathes.Insert(0, "Base");
         });
     }
 

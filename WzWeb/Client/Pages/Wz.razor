@@ -13,18 +13,18 @@ else
 {
     <BreadCrumb Path=@path></BreadCrumb>
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-md-3">
             <NodeList CurrentNode="@node"></NodeList>
         </div>
         @if (node.Type == NodeType.Wz_File)
         {
-            <div class="col-sm-6">
+            <div class="col-md-6">
                 <FileTable CurrentNode=@node></FileTable>
             </div>
         }
         @if (node.Type == NodeType.Wz_Png)
         {
-            <div class="col-sm-6">
+            <div class="col-md-6">
                 <Png CurrentNode="@node"></Png>
             </div>
         }
