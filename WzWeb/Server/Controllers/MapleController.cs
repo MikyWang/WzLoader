@@ -41,11 +41,19 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetFileInfo")]
-        public FileInfo GetFileInfo(Node node)
+        public MapleFileInfo GetFileInfo(Node node)
         {
             var wz_Node = node.ToWzNode(wzLoader.HeadNode);
             var wz_File = wz_Node.Value as Wz_File;
             return wz_File.GetFileInfo();
+        }
+
+        [HttpPost("GetPng")]
+        public PngInfo GetPng(Node node)
+        {
+            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
+            var wz_png = wz_Node.GetValue<Wz_Png>();
+            return wz_png.ToPngInfo();
         }
 
     }

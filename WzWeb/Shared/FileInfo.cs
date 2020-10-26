@@ -3,7 +3,7 @@ using System.Text;
 
 namespace WzWeb.Shared
 {
-    public class FileInfo
+    public class MapleFileInfo
     {
         //Header
         public string Signature { get; set; }

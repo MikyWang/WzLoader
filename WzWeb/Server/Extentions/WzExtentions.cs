@@ -4,6 +4,7 @@ using WzWeb.Shared;
 using WzWeb.Server.Services;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 namespace WzWeb.Server.Extentions
 {
@@ -34,9 +35,9 @@ namespace WzWeb.Server.Extentions
             return NodeType.Wz_Normal;
         }
 
-        public static FileInfo GetFileInfo(this Wz_File wz_File)
+        public static MapleFileInfo GetFileInfo(this Wz_File wz_File)
         {
-            return new FileInfo
+            return new MapleFileInfo
             {
                 Signature = wz_File.Header.Signature,
                 Copyright = wz_File.Header.Copyright,
@@ -73,6 +74,28 @@ namespace WzWeb.Server.Extentions
 
         }
 
+        public static PngInfo ToPngInfo(this Wz_Png wz_Png)
+        {
+            string base64;
+            using (var bmp = wz_Png.ExtractPng())
+            {
+                using (var ms = new MemoryStream())
+                {
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    byte[] data = ms.ToArray();
+                    base64 = Convert.ToBase64String(data);
+                }
+            }
+            return new PngInfo
+            {
+                Width = wz_Png.Width,
+                Height = wz_Png.Height,
+                Base64Data = base64,
+                DataLength = wz_Png.DataLength,
+                Form = wz_Png.Form
+            };
+        }
+
         private static Wz_Node SearchNode(this Wz_Node wz_Node, List<string> pathes)
         {
             Wz_Node node;
@@ -100,6 +123,7 @@ namespace WzWeb.Server.Extentions
             }
             return SearchNode(node, pathes);
         }
+
 
     }
 }

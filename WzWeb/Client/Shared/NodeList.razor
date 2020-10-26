@@ -7,23 +7,24 @@
 }
 else
 {
-    <div class="card">
-        <div class="card-header">
-            <h5>子节点</h5>
-        </div>
-        <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
-            <div class="list-group list-group-flush">
-                @foreach (var node in nodes)
-                {
-                    <div class="list-group-item">
-                        <NodeLink CurrentNode="@node"></NodeLink>
-                    </div>
-                }
+    if (nodes.Length > 0)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5>子节点</h5>
+            </div>
+            <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
+                <div class="list-group list-group-flush">
+                    @foreach (var node in nodes)
+                    {
+                        <div class="list-group-item">
+                            <NodeLink CurrentNode="@node"></NodeLink>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-
-
+    }
 }
 
 @code{
