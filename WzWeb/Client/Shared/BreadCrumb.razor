@@ -1,0 +1,42 @@
+﻿@if (Path == null || pathes == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    @{
+                        var ext = "";
+                        @for (int i = 0; i < pathes.Length - 1; i++)
+                        {
+                            ext += pathes[i];
+                            <li class="breadcrumb-item"><a href="wz?path=@ext">@pathes[i]</a></li>
+                            ext += @"\";
+                        }
+                        <li class="breadcrumb-item active" aria-current="page">@pathes[pathes.Length - 1]</li>
+                    }
+                </ol>
+            </nav>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Path { get; set; }
+
+    private string[] pathes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            pathes = Path.Split('\\');
+        });
+    }
+
+}
