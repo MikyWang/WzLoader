@@ -15,7 +15,6 @@ namespace WzWeb.Server.Extentions
 
             return new Node
             {
-                ParentNode = wz_Node.ParentNode?.ToNode(),
                 Text = wz_Node.Text,
                 Value = wz_Node.Value?.ToString(),
                 FullPathToFile = wz_Node.FullPathToFile,
@@ -25,7 +24,7 @@ namespace WzWeb.Server.Extentions
         public static NodeType GetNodeType(this Wz_Node wz_Node)
         {
             var value = wz_Node.Value;
-            if (value == null) return NodeType.Wz_Normal;
+            if (value == null) return NodeType.Wz_Null;
             if (value is Wz_File) return NodeType.Wz_File;
             if (value is Wz_Image) return NodeType.Wz_Image;
             if (value is Wz_Png) return NodeType.Wz_Png;

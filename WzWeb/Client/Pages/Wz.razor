@@ -3,7 +3,7 @@
 @using WzWeb.Shared
 @using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http
-@inject NavigationManager NavigationManager;
+@inject NavigationManager NavigationManager
 
 @if (node == null)
 {
@@ -13,19 +13,26 @@ else
 {
     <BreadCrumb Path=@path></BreadCrumb>
     <div class="row">
-        <div class="col-md-3">
-            <NodeList CurrentNode="@node"></NodeList>
-        </div>
+        <NodeList CurrentNode="@node"></NodeList>
         @if (node.Type == NodeType.Wz_File)
         {
             <div class="col-md-6">
                 <FileTable CurrentNode=@node></FileTable>
             </div>
         }
-        @if (node.Type == NodeType.Wz_Png)
+        else if (node.Type == NodeType.Wz_Png)
         {
             <div class="col-md-6">
                 <Png CurrentNode="@node"></Png>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-9">
+                <dl>
+                    <dt>@node.Text</dt>
+                    <dd>@node.Value</dd>
+                </dl>
             </div>
         }
 
@@ -49,6 +56,7 @@ else
 
         path = path ?? "Base";
         node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
+
     }
 
 }

@@ -28,7 +28,7 @@ namespace WzWeb.Server.Controllers
         [HttpGet("GetNode")]
         public Node Get(string path)
         {
-            var head = wzLoader.HeadNode;
+            var head = wzLoader.BaseNode;
             var wz_node = head.SearchNode(path);
             return wz_node.ToNode();
         }
@@ -36,14 +36,15 @@ namespace WzWeb.Server.Controllers
         [HttpPost("GetNodeList")]
         public IEnumerable<Node> GetNodeList(Node node)
         {
-            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
+            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
+            wz_Node.Nodes.SortByImgID();
             return wz_Node.Nodes.Select(node => node.ToNode()).ToArray();
         }
 
         [HttpPost("GetFileInfo")]
         public MapleFileInfo GetFileInfo(Node node)
         {
-            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
+            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
             var wz_File = wz_Node.Value as Wz_File;
             return wz_File.GetFileInfo();
         }
@@ -51,7 +52,7 @@ namespace WzWeb.Server.Controllers
         [HttpPost("GetPng")]
         public PngInfo GetPng(Node node)
         {
-            var wz_Node = node.ToWzNode(wzLoader.HeadNode);
+            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
             var wz_png = wz_Node.GetValue<Wz_Png>();
             return wz_png.ToPngInfo();
         }

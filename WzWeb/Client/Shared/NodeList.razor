@@ -7,20 +7,22 @@
 }
 else
 {
-    if (nodes.Length > 0)
+    if (nodes.Count > 0)
     {
-        <div class="card">
-            <div class="card-header">
-                <h5>子节点</h5>
-            </div>
-            <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
-                <div class="list-group list-group-flush">
-                    @foreach (var node in nodes)
-                    {
-                        <div class="list-group-item">
-                            <NodeLink CurrentNode="@node"></NodeLink>
-                        </div>
-                    }
+        <div class="col-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5>子节点</h5>
+                </div>
+                <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
+                    <div class="list-group list-group-flush">
+                        @foreach (var node in nodes)
+                        {
+                            <div class="list-group-item">
+                                <NodeLink CurrentNode="@node"></NodeLink>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,11 +35,11 @@ else
 
     private string height = "850px";
 
-    private Node[] nodes;
+    private List<Node> nodes;
 
     protected override async Task OnInitializedAsync()
     {
         var resp = await Http.PostAsJsonAsync<Node>("Maple/GetNodeList", CurrentNode);
-        nodes = await resp.Content.ReadFromJsonAsync<Node[]>();
+        nodes = await resp.Content.ReadFromJsonAsync<List<Node>>();
     }
 }

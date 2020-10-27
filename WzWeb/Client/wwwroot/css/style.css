@@ -17,3 +17,10 @@
     background: #ededed;
     border-radius: 10px;
 }
+
+.breadcrumb-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
