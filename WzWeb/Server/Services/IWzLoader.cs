@@ -8,6 +8,7 @@ namespace WzWeb.Server.Services
     public interface IWzLoader
     {
         public Wz_Node BaseNode { get; }
+        public Wz_Node CharacterNode { get; }
         public Node OutPutNode(Wz_Node wz_Node);
     }
 }
