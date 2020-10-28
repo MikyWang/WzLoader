@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using WzWeb.Server.Services;
 using WzLib;
 using WzWeb.Server.Extentions;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace WzWeb.Server.Controllers
 {
@@ -34,11 +33,14 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetNodeList")]
-        public IEnumerable<Node> GetNodeList(Node node)
+        public GetNodeListResponse GetNodeList(GetNodeListRequest req)
         {
+            var node = req.Node;
             var wz_Node = node.ToWzNode(wzLoader.BaseNode);
-            wz_Node.Nodes.SortByImgID();
-            return wz_Node.Nodes.Select(node => node.ToNode()).ToArray();
+            var resp = new GetNodeListResponse();
+            resp.Nodes = wz_Node.Nodes.Select(node => node.ToNode()).Skip(req.Start).Take(req.Num).ToList();
+            resp.HasNext = resp.Nodes.Count == req.Num;
+            return resp;
         }
 
         [HttpPost("GetFileInfo")]

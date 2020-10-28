@@ -9,12 +9,14 @@ namespace WzWeb.Server.Services
     public class WzLoader : IWzLoader
     {
         private readonly ILogger<WzLoader> logger;
-        private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
-        //private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
+        //private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
+        private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
 
 
         public Wz_Node BaseNode { get; private set; }
         public Wz_Node CharacterNode { get; private set; }
+        public Wz_Node StringNode { get; private set; }
+
         public WzLoader(ILogger<WzLoader> logger)
         {
             this.logger = logger;
@@ -22,11 +24,8 @@ namespace WzWeb.Server.Services
             wz_Structure.Load(FILEPATH);
             BaseNode = wz_Structure.WzNode;
             CharacterNode = BaseNode.SearchNode("Character");
-        }
-
-        public Node OutPutNode(Wz_Node wz_Node)
-        {
-            return wz_Node.ToNode();
+            StringNode = BaseNode.SearchNode("String");
+            this.logger.LogInformation($"已加载Wz,baseNode={BaseNode.Text},character={CharacterNode.Text},string={StringNode.Text}");
         }
 
     }
