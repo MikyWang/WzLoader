@@ -1,5 +1,8 @@
-﻿@using WzWeb.Shared
+﻿@using WzWeb.Client.Services;
+@using WzWeb.Shared
 @inject HttpClient Http
+@inject IBrowserService BrowserService
+
 
 @if (searchNodes == null)
 {
@@ -16,20 +19,27 @@ else
                         <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@nodeText @oninput="SearchNode">
                     </form>
                 </div>
-                <div class="card-body overflow-auto" style="height: @(height);padding:0rem">
-                    <div class="list-group list-group-flush">
-                        @foreach (var node in searchNodes)
-                        {
-                            <div class="list-group-item">
-                                <NodeLink CurrentNode="@node"></NodeLink>
+                <FixedHeightTemplate Percentage="72">
+                    <Body>
+                        <div class="card-body " style="padding:0rem">
+                            <div class="list-group list-group-flush">
+                                @foreach (var node in searchNodes)
+                                {
+                                    <div class="list-group-item">
+                                        <NodeLink CurrentNode="@node"></NodeLink>
+                                    </div>
+                                }
                             </div>
-                        }
-                    </div>
-                </div>
+                        </div>
+                    </Body>
+                </FixedHeightTemplate>
             </div>
         </div>
     }
 }
+
+
+
 
 @code{
     [Parameter]
@@ -37,10 +47,10 @@ else
 
     private string nodeText;
 
-    private string height = "600px";
-
     private List<Node> nodes = new List<Node>();
     private List<Node> searchNodes;
+
+    private int height = 56; //56为导航条高度
 
     private GetNodeListRequest request;
     private bool hasNext;
@@ -54,6 +64,9 @@ else
         hasNext = response.HasNext;
         nodes.AddRange(response.Nodes);
         searchNodes = nodes;
+
+        var config = BrowserService.Config;
+        height = config.InnerHeight - height;
     }
 
     private void SearchNode(ChangeEventArgs e)

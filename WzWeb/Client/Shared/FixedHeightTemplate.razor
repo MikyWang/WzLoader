@@ -1,0 +1,43 @@
+﻿@using WzWeb.Client.Services
+@using WzWeb.Shared;
+@inject IBrowserService BrowserService
+
+<div class="overflow-auto" style="height:@(height+"px")">
+    @Body
+</div>
+
+@code {
+    private int _percentage;
+    /// <summary>
+    /// 百分比高度 0-100之间
+    /// </summary>
+    [Parameter]
+    public int Percentage
+    {
+        set
+        {
+            _percentage = value > 100 ? 100 : value;
+        }
+
+        get
+        {
+            return _percentage;
+        }
+
+    }
+
+    [Parameter]
+    public RenderFragment Body { get; set; }
+
+    private int height;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            var browserHeight = BrowserService.Config.InnerHeight;
+            height = (browserHeight * Percentage) / 100;
+        });
+    }
+
+}

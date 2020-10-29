@@ -42,7 +42,6 @@ else
                 </dl>
             </div>
         }
-        <p>@cfg.InnerHeight</p>
     </div>
 }
 
@@ -51,8 +50,6 @@ else
     private string path;
 
     private Node node;
-
-    private BrowserConfig cfg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,8 +62,6 @@ else
 
         path = path ?? "Base";
         node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
-
-        cfg = BrowserService.BrowserConfig;
 
     }
 

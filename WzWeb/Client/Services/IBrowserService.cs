@@ -6,7 +6,7 @@ namespace WzWeb.Client.Services
 {
     public interface IBrowserService
     {
-        public BrowserConfig BrowserConfig { get; }
+        public BrowserConfig Config { get; }
         public bool HasInit { get; }
 
         public Task Init();

@@ -8,7 +8,7 @@ namespace WzWeb.Client.Services
 {
     public class BrowserService : IBrowserService
     {
-        public BrowserConfig BrowserConfig { get; private set; }
+        public BrowserConfig Config { get; private set; }
 
         public bool HasInit { get; private set; }
 
@@ -25,7 +25,7 @@ namespace WzWeb.Client.Services
             if (!HasInit)
             {
                 var json = await jSRuntime.InvokeAsync<string>("getBrowserConfig");
-                BrowserConfig = JsonConvert.DeserializeObject<BrowserConfig>(json);
+                Config = JsonConvert.DeserializeObject<BrowserConfig>(json);
                 HasInit = true;
             }
 
