@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @if (node == null)
 {
@@ -39,7 +40,7 @@ else
                 </dl>
             </div>
         }
-
+        <p>@cfg</p>
     </div>
 }
 
@@ -48,6 +49,8 @@ else
     private string path;
 
     private Node node;
+
+    private string cfg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,6 +64,7 @@ else
         path = path ?? "Base";
         node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
 
+        cfg = await JSRuntime.InvokeAsync<string>("getBrowserConfig");
     }
 
 }
