@@ -5,5 +5,5 @@
         outerHeight: window.outerHeight,
         outerWidth: window.outerWidth
     }
-    return cfg;
+    return JSON.stringify(cfg);
 }

@@ -2,9 +2,11 @@
 @page "/wz"
 @using WzWeb.Shared
 @using Microsoft.AspNetCore.WebUtilities
+@using Newtonsoft.Json;
+@using WzWeb.Client.Services;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IBrowserService BrowserService
 
 @if (node == null)
 {
@@ -40,7 +42,7 @@ else
                 </dl>
             </div>
         }
-        <p>@cfg</p>
+        <p>@cfg.InnerHeight</p>
     </div>
 }
 
@@ -50,7 +52,7 @@ else
 
     private Node node;
 
-    private string cfg;
+    private BrowserConfig cfg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,7 +66,8 @@ else
         path = path ?? "Base";
         node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
 
-        cfg = await JSRuntime.InvokeAsync<string>("getBrowserConfig");
+        cfg = BrowserService.BrowserConfig;
+
     }
 
 }
