@@ -3,7 +3,7 @@
 @inject IBrowserService BrowserService
 
 <div class="overflow-auto" style="height:@(height+"px")">
-    @Body
+    @ChildContent
 </div>
 
 @code {
@@ -27,7 +27,7 @@
     }
 
     [Parameter]
-    public RenderFragment Body { get; set; }
+    public RenderFragment ChildContent { get; set; }
 
     private int height;
 

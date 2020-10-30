@@ -1,10 +1,42 @@
 ﻿@using WzWeb.Shared
+@inject HttpClient Http
 
-<h3>Component1</h3>
-
+@if (uol == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <NormalCardTemplate>
+        <Header>
+            <h5>@CurrentNode.Text</h5>
+        </Header>
+        <Body>
+            <dl class="row">
+                <dt class="card-title">@targetNode.Text</dt>
+                <dd class="card-text">
+                    <HyperLink Link="@($"wz?path={targetNode.FullPathToFile}")">@uol</HyperLink>
+                </dd>
+            </dl>
+        </Body>
+    </NormalCardTemplate>
+}
 @code {
 
     [Parameter]
     public Node CurrentNode { get; set; }
+
+    private Node targetNode;
+    private string uol;
+    private string link;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var request = new UolRequest { Node = CurrentNode };
+        var data = await Http.PostAsJsonAsync<UolRequest>("Maple/GetUol", request);
+        var response = await data.Content.ReadFromJsonAsync<UolResponse>();
+        targetNode = response.TargetNode;
+        uol = response.Uol;
+    }
 
 }

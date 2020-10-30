@@ -19,19 +19,17 @@ else
                         <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@nodeText @oninput="SearchNode">
                     </form>
                 </div>
-                <FixedHeightTemplate Percentage="72">
-                    <Body>
-                        <div class="card-body " style="padding:0rem">
-                            <div class="list-group list-group-flush">
-                                @foreach (var node in searchNodes)
-                                {
-                                    <div class="list-group-item">
-                                        <NodeLink CurrentNode="@node"></NodeLink>
-                                    </div>
-                                }
-                            </div>
+                <FixedHeightTemplate Percentage="70">
+                    <div class="card-body " style="padding:0rem">
+                        <div class="list-group list-group-flush">
+                            @foreach (var node in searchNodes)
+                            {
+                                <div class="list-group-item">
+                                    <NodeLink CurrentNode="@node"></NodeLink>
+                                </div>
+                            }
                         </div>
-                    </Body>
+                    </div>
                 </FixedHeightTemplate>
             </div>
         </div>
@@ -52,15 +50,15 @@ else
 
     private int height = 56; //56为导航条高度
 
-    private GetNodeListRequest request;
+    private NodeListRequest request;
     private bool hasNext;
 
     protected override async Task OnInitializedAsync()
     {
 
-        request = new GetNodeListRequest { Node = CurrentNode, Start = 0, Num = 50 };
-        var content = await Http.PostAsJsonAsync<GetNodeListRequest>("Maple/GetNodeList", request);
-        var response = await content.Content.ReadFromJsonAsync<GetNodeListResponse>();
+        request = new NodeListRequest { Node = CurrentNode, Start = 0, Num = 50 };
+        var content = await Http.PostAsJsonAsync<NodeListRequest>("Maple/GetNodeList", request);
+        var response = await content.Content.ReadFromJsonAsync<NodeListResponse>();
         hasNext = response.HasNext;
         nodes.AddRange(response.Nodes);
         searchNodes = nodes;
@@ -85,8 +83,8 @@ else
         if (hasNext)
         {
             request.Start += request.Num;
-            var content = await Http.PostAsJsonAsync<GetNodeListRequest>("Maple/GetNodeList", request);
-            var response = await content.Content.ReadFromJsonAsync<GetNodeListResponse>();
+            var content = await Http.PostAsJsonAsync<NodeListRequest>("Maple/GetNodeList", request);
+            var response = await content.Content.ReadFromJsonAsync<NodeListResponse>();
             nodes.AddRange(response.Nodes);
             searchNodes = nodes;
             hasNext = response.HasNext;

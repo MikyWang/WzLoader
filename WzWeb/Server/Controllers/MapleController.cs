@@ -33,11 +33,11 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetNodeList")]
-        public GetNodeListResponse GetNodeList(GetNodeListRequest req)
+        public NodeListResponse GetNodeList(NodeListRequest req)
         {
             var node = req.Node;
             var wz_Node = node.ToWzNode(wzLoader.BaseNode);
-            var resp = new GetNodeListResponse();
+            var resp = new NodeListResponse();
             resp.Nodes = wz_Node.Nodes.Select(node => node.ToNode()).Skip(req.Start).Take(req.Num).ToList();
             resp.HasNext = resp.Nodes.Count == req.Num;
             return resp;
@@ -57,6 +57,21 @@ namespace WzWeb.Server.Controllers
             var wz_Node = node.ToWzNode(wzLoader.BaseNode);
             var wz_png = wz_Node.GetValue<Wz_Png>();
             return wz_png.ToPngInfo();
+        }
+
+        [HttpPost("GetUol")]
+        public UolResponse GetUol(Node node)
+        {
+            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
+
+            if (wz_Node == null || !(wz_Node.Value is Wz_Uol)) return null;
+
+            var wz_Uol = wz_Node.GetValue<Wz_Uol>();
+            return new UolResponse
+            {
+                TargetNode = wz_Uol.HandleUol(wz_Node).ToNode(),
+                Uol = wz_Uol.Uol
+            };
         }
 
     }
