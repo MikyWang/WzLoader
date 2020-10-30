@@ -14,7 +14,7 @@
 }
 else
 {
-    <BreadCrumb Path=@path></BreadCrumb>
+    <BreadCrumb Path=@(BrowserService.NodePath)></BreadCrumb>
     <div class="row">
         <NodeList CurrentNode="@node"></NodeList>
         @if (node.Type == NodeType.Wz_File)
@@ -31,7 +31,7 @@ else
         }
         else if (node.Type == NodeType.Wz_Uol)
         {
-            <UolCompnent CurrentNode="@node"></UolCompnent>
+            <UolComponent CurrentNode="@node"></UolComponent>
         }
         else
         {
@@ -47,8 +47,6 @@ else
 
 @code {
 
-    private string path;
-
     private Node node;
 
     protected override async Task OnInitializedAsync()
@@ -57,11 +55,11 @@ else
 
         if (QueryHelpers.ParseQuery(query).TryGetValue("path", out var value))
         {
-            path = value;
+            BrowserService.NodePath = value;
         }
 
-        path = path ?? "Base";
-        node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={path}");
+        BrowserService.NodePath = BrowserService.NodePath ?? "Base";
+        node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={ BrowserService.NodePath}");
 
     }
 

@@ -8,6 +8,7 @@ namespace WzWeb.Client.Services
     {
         public BrowserConfig Config { get; }
         public bool HasInit { get; }
+        public string NodePath { get; set; }
 
         public Task Init();
     }

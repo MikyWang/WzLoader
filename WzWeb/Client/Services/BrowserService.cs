@@ -12,6 +12,8 @@ namespace WzWeb.Client.Services
 
         public bool HasInit { get; private set; }
 
+        public string NodePath { get; set; }
+
         private readonly IJSRuntime jSRuntime;
 
         public BrowserService(IJSRuntime jSRuntime)
