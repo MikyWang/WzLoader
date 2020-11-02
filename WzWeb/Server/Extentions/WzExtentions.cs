@@ -66,7 +66,7 @@ namespace WzWeb.Server.Extentions
 
         public static Wz_Node SearchNode(this Wz_Node wz_Node, string fullPathToFile)
         {
-            if (wz_Node.FullPathToFile == fullPathToFile) return wz_Node;
+            if (fullPathToFile == null || wz_Node.FullPathToFile == fullPathToFile) return wz_Node;
             var pathes = fullPathToFile.Split('\\').ToList();
             if (pathes[0] != "Base") pathes.Insert(0, "Base");
             return SearchNode(wz_Node, pathes);
@@ -118,6 +118,7 @@ namespace WzWeb.Server.Extentions
                 {
                     value.TryExtract();
                     node = value.Node;
+
                 }
             }
             return SearchNode(node, pathes);
