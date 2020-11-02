@@ -56,7 +56,7 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        request = new NodeListRequest { Node = CurrentNode, Start = 0, Num = 50 };
+        request = new NodeListRequest { Node = CurrentNode, Start = 0, Num = 200 };
         var content = await Http.PostAsJsonAsync<NodeListRequest>("Maple/GetNodeList", request);
         var response = await content.Content.ReadFromJsonAsync<NodeListResponse>();
         hasNext = response.HasNext;

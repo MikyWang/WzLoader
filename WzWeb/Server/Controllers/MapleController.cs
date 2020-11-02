@@ -60,9 +60,9 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetUol")]
-        public UolResponse GetUol(Node node)
+        public UolResponse GetUol(UolRequest request)
         {
-            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
+            var wz_Node = request.Node.ToWzNode(wzLoader.BaseNode);
 
             if (wz_Node == null || !(wz_Node.Value is Wz_Uol)) return null;
 

@@ -9,12 +9,12 @@ else
 {
     <NormalCardTemplate>
         <Header>
-            <h5>@CurrentNode.Text</h5>
+            <h5>超链接</h5>
         </Header>
         <Body>
             <dl class="row">
-                <dt class="card-title">@targetNode.Text</dt>
-                <dd class="card-text">
+                <dt class="card-title col-md-6">@targetNode.Text</dt>
+                <dd class="card-text col-md-6">
                     <HyperLink Link="@($"wz?path={targetNode.FullPathToFile}")">@uol</HyperLink>
                 </dd>
             </dl>

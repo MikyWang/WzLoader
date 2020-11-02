@@ -26,12 +26,14 @@ else
         else if (node.Type == NodeType.Wz_Png)
         {
             <div class="col-md-6">
-                <Png CurrentNode="@node"></Png>
+                <PngComponent CurrentNode="@node"></PngComponent>
             </div>
         }
         else if (node.Type == NodeType.Wz_Uol)
         {
-            <UolComponent CurrentNode="@node"></UolComponent>
+            <div class="col-md-12">
+                <UolComponent CurrentNode="@node"></UolComponent>
+            </div>
         }
         else
         {

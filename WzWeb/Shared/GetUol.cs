@@ -8,8 +8,8 @@ namespace WzWeb.Shared
 
     public class UolResponse
     {
-        public string Uol;
+        public string Uol { get; set; }
         //Uol对应的Node
-        public Node TargetNode;
+        public Node TargetNode { get; set; }
     }
 }
