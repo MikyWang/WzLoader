@@ -5,6 +5,9 @@ using WzWeb.Server.Services;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using WzWeb.Shared.Character;
+using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace WzWeb.Server.Extentions
 {
@@ -32,6 +35,16 @@ namespace WzWeb.Server.Extentions
             if (value is Wz_Uol) return NodeType.Wz_Uol;
             if (value is Wz_Vector) return NodeType.Wz_Vector;
             return NodeType.Wz_Normal;
+        }
+
+        public static Wz_Node GetImageNode(this Wz_Node wz_Node)
+        {
+            var image = wz_Node.GetValue<Wz_Image>();
+            if (image.TryExtract())
+            {
+                return image.Node;
+            }
+            return null;
         }
 
         public static MapleFileInfo GetFileInfo(this Wz_File wz_File)
@@ -124,6 +137,98 @@ namespace WzWeb.Server.Extentions
             return SearchNode(node, pathes);
         }
 
+        public static CharacterInfo GetCharacterInfo(this Wz_Node wz_Node)
+        {
+            var infoNode = wz_Node.Nodes["info"];
+            if (infoNode == null) return null;
 
+            return new CharacterInfo
+            {
+                Islot = infoNode.Nodes["islot"].Value.ToString(),
+                Vslot = infoNode.Nodes["vslot"].ToString(),
+                Cash = infoNode.Nodes["cash"].ToString()
+            };
+        }
+
+        public static PngInfo GetPngInfo(this Wz_Node wz_Node, Wz_Node baseNode)
+        {
+            var nodes = wz_Node.Nodes;
+            var inLinkNode = nodes["_inlink"];
+            var outLinkNode = nodes["_outlink"];
+            PngInfo pngInfo;
+            if (inLinkNode != null)
+            {
+                var link = inLinkNode.Value.ToString();
+                var node = wz_Node.GetNodeWzImage().Node.SearchNode(link);
+                pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
+            }
+            else if (outLinkNode != null)
+            {
+                var link = outLinkNode.Value.ToString();
+                var node = baseNode.SearchNode(link);
+                pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
+            }
+            else
+            {
+                pngInfo = wz_Node.GetValue<Wz_Png>().ToPngInfo();
+            }
+            return pngInfo;
+        }
+
+        public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode)
+        {
+            var nodes = wz_Node.Nodes;
+            var configs = new Dictionary<string, CharacterConfig>();
+            foreach (var acNode in nodes)
+            {
+                configs.Add(acNode.Text, acNode.GetCharacterConfig(baseNode));
+            }
+            return new CharacterAction { Configs = configs };
+        }
+
+        public static CharacterConfig GetCharacterConfig(this Wz_Node wz_Node, Wz_Node baseNode)
+        {
+            var nodes = wz_Node.Nodes;
+            var config = new CharacterConfig
+            {
+                Origin = nodes["origin"]?.GetValue<Wz_Vector>(),
+                PngInfo = wz_Node.GetPngInfo(baseNode),
+                Group = nodes["group"]?.Value?.ToString(),
+                Hash = nodes["_hash"]?.Value?.ToString(),
+                Map = wz_Node.GetMap(),
+                Z = nodes["z"]?.Value?.ToString(),
+                Action = nodes["action"]?.Value?.ToString(),
+                Delay = nodes["delay"]?.Value?.ToString(),
+                Frame = nodes["frame"]?.Value?.ToString(),
+                Move = nodes["move"]?.GetValue<Wz_Vector>(),
+                Rotate = nodes["rotate"]?.Value?.ToString(),
+                Vector = nodes["vector"]?.GetValue<Wz_Vector>(),
+                Flip = nodes["flip"]?.Value?.ToString()
+            };
+            if (config.Action != null)
+            {
+                var link = $"{config.Action}\\{config.Frame}";
+                var node = wz_Node.GetNodeWzImage().Node.SearchNode(link);
+                var baseConfig = node.GetCharacterConfig(baseNode);
+                config.Origin = baseConfig.Origin;
+                config.Map = baseConfig.Map;
+                config.Z = baseConfig.Z;
+                config.Group = baseConfig.Group;
+                config.Hash = baseConfig.Hash;
+                config.PngInfo = baseConfig.PngInfo;
+            }
+            return config;
+        }
+
+        public static IDictionary<string, Point> GetMap(this Wz_Node wz_Node)
+        {
+            var map = new Dictionary<string, Point>();
+            var mapNode = wz_Node.Nodes["map"];
+            foreach (var node in mapNode.Nodes)
+            {
+                map.Add(node.Text, node.GetValue<Wz_Vector>());
+            }
+            return map;
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace WzWeb.Server.Services
     public class WzLoader : IWzLoader
     {
         private readonly ILogger<WzLoader> logger;
-        //private static string FILEPATH = @"D:\文档\WzFile\Base.wz";
-        private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
+        private readonly string FILEPATH = @"D:\文档\WzFile\Base.wz";
+        //private static string FILEPATH = @"/Volumes/数据/MapleStory/Base.wz";
 
 
         public Wz_Node BaseNode { get; private set; }

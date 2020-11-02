@@ -16,7 +16,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="Extentions\" />
   </ItemGroup>
 </Project>
