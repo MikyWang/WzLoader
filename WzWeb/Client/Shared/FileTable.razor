@@ -48,7 +48,7 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        var resp = await Http.PostAsJsonAsync<Node>("Maple/GetFileInfo", CurrentNode);
+        var resp = await Http.PostAsJsonAsync<Node>("api/Maple/GetFileInfo", CurrentNode);
         fileInfo = await resp.Content.ReadFromJsonAsync<MapleFileInfo>();
     }
 

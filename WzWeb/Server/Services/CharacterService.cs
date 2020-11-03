@@ -29,18 +29,17 @@ namespace WzWeb.Server.Services
             var wz_nodes = CharacterNode.Nodes.ToList().FindAll(node => FormatID(node.Text) == id);
             if (wz_nodes.Count == 0) return null;
 
-            //var headNode = wz_nodes.Find(node => node.Text.StartsWith("0001")).GetImageNode();
-
+            var headNode = wz_nodes.Find(node => node.Text.StartsWith("0001")).GetImageNode();
             var bodyNode = wz_nodes.Find(node => node.Text.StartsWith("0000")).GetImageNode();
 
             #region 获取所有动作
-            Func<Wz_Node, Wz_Node, Dictionary<string, CharacterAction>> getActions = (node, baseNode) =>
+            Func<Wz_Node, Wz_Node, Dictionary<string, CharacterMotion>> getMotions = (node, baseNode) =>
               {
-                  var actionNodes = node.Nodes.Where(node => node.Text != "info").Select(node => node);
-                  var actions = new Dictionary<string, CharacterAction>();
+                  var actionNodes = node.Nodes.Where(node => (node.Text != "info") && (node.Text != "front") && (node.Text != "back")).Take(1);
+                  var actions = new Dictionary<string, CharacterMotion>();
                   foreach (var acNode in actionNodes)
                   {
-                      actions.Add(acNode.Text, acNode.GetCharacterAction(baseNode));
+                      actions.Add(acNode.Text, acNode.GetCharacterMotion(baseNode));
                   }
                   return actions;
               };
@@ -49,10 +48,10 @@ namespace WzWeb.Server.Services
             Character character = new Character
             {
                 Id = id,
-                //HeadInfo = headNode.GetCharacterInfo(),
-                //HeadActions = getActions(headNode, CharacterNode),
+                HeadInfo = headNode.GetCharacterInfo(),
+                HeadActions = getMotions(headNode, CharacterNode),
                 BodyInfo = bodyNode.GetCharacterInfo(),
-                BodyActions = getActions(bodyNode, CharacterNode)
+                BodyActions = getMotions(bodyNode, CharacterNode)
             };
 
             return character;

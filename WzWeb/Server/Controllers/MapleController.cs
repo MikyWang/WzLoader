@@ -12,7 +12,7 @@ using WzWeb.Server.Extentions;
 namespace WzWeb.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class MapleController : ControllerBase
     {
         private readonly IWzLoader wzLoader;

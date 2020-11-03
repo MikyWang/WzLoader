@@ -16,7 +16,15 @@ else
             <div class="card">
                 <div class="card-header">
                     <form class="form row">
-                        <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@nodeText @oninput="SearchNode">
+                        @if (hasNext)
+                        {
+                            <input class="form-control" type="search" placeholder="正在加载节点..." aria-label="Search" value=@nodeText @oninput="SearchNode" readonly>
+                        }
+                        else
+                        {
+                            <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@nodeText @oninput="SearchNode">
+                        }
+
                     </form>
                 </div>
                 <FixedHeightTemplate Percentage="70">
@@ -36,9 +44,6 @@ else
     }
 }
 
-
-
-
 @code{
     [Parameter]
     public Node CurrentNode { get; set; }
@@ -56,8 +61,8 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        request = new NodeListRequest { Node = CurrentNode, Start = 0, Num = 200 };
-        var content = await Http.PostAsJsonAsync<NodeListRequest>("Maple/GetNodeList", request);
+        request = new NodeListRequest { Node = CurrentNode, Start = 0, Num = 300 };
+        var content = await Http.PostAsJsonAsync<NodeListRequest>("api/Maple/GetNodeList", request);
         var response = await content.Content.ReadFromJsonAsync<NodeListResponse>();
         hasNext = response.HasNext;
         nodes.AddRange(response.Nodes);
@@ -83,7 +88,7 @@ else
         if (hasNext)
         {
             request.Start += request.Num;
-            var content = await Http.PostAsJsonAsync<NodeListRequest>("Maple/GetNodeList", request);
+            var content = await Http.PostAsJsonAsync<NodeListRequest>("api/Maple/GetNodeList", request);
             var response = await content.Content.ReadFromJsonAsync<NodeListResponse>();
             nodes.AddRange(response.Nodes);
             searchNodes = nodes;

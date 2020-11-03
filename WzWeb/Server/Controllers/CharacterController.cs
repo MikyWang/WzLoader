@@ -13,7 +13,7 @@ using WzWeb.Shared.Character;
 namespace WzWeb.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CharacterController : Controller
     {
 

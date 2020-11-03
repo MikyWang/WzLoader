@@ -5,7 +5,8 @@ namespace WzWeb.Shared.Character
 {
     public class CharacterAction
     {
-        public Dictionary<string, CharacterConfig> Configs { get; set; }
+        public int Id { get; set; }
+        public IDictionary<string, CharacterConfig> Configs { get; set; }
 
     }
 }

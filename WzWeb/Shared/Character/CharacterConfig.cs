@@ -6,6 +6,7 @@ namespace WzWeb.Shared.Character
 {
     public class CharacterConfig
     {
+        public string Name { get; set; }
         public PngInfo PngInfo { get; set; }
         public Point Origin { get; set; }
         public IDictionary<string, Point> Map { get; set; }

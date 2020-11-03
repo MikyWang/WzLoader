@@ -33,7 +33,7 @@ else
     protected async override Task OnInitializedAsync()
     {
         var request = new UolRequest { Node = CurrentNode };
-        var data = await Http.PostAsJsonAsync<UolRequest>("Maple/GetUol", request);
+        var data = await Http.PostAsJsonAsync<UolRequest>("api/Maple/GetUol", request);
         var response = await data.Content.ReadFromJsonAsync<UolResponse>();
         targetNode = response.TargetNode;
         uol = response.Uol;

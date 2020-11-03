@@ -8,8 +8,8 @@ namespace WzWeb.Shared.Character
         public int Id { get; set; }
         public CharacterInfo HeadInfo { get; set; }
         public CharacterInfo BodyInfo { get; set; }
-        public IDictionary<string, CharacterAction> HeadActions { get; set; }
-        public IDictionary<string, CharacterAction> BodyActions { get; set; }
+        public IDictionary<string, CharacterMotion> HeadActions { get; set; }
+        public IDictionary<string, CharacterMotion> BodyActions { get; set; }
 
     }
 

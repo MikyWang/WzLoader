@@ -1,7 +1,22 @@
-﻿<h3>CharacterComponent</h3>
+﻿@page "/character"
+@using WzWeb.Shared
+@using Microsoft.AspNetCore.WebUtilities
+@using Newtonsoft.Json
+@using WzWeb.Client.Services
+@using WzWeb.Shared.Character
+@inject HttpClient Http
 
+@if (character == null)
+{
+    <Loading></Loading>
+}
 
 
 @code {
+    private Character character;
 
+    protected async override Task OnInitializedAsync()
+    {
+        @*character = await Http.GetFromJsonAsync<Character>("api/Character");*@
+    }
 }

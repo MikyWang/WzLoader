@@ -61,7 +61,7 @@ else
         }
 
         BrowserService.NodePath = BrowserService.NodePath ?? "Base";
-        node = await Http.GetFromJsonAsync<Node>($"Maple/GetNode?path={ BrowserService.NodePath}");
+        node = await Http.GetFromJsonAsync<Node>($"api/Maple/GetNode?path={ BrowserService.NodePath}");
 
     }
 

@@ -20,7 +20,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var resp = await Http.PostAsJsonAsync<Node>("Maple/GetPng", CurrentNode);
+        var resp = await Http.PostAsJsonAsync<Node>("api/Maple/GetPng", CurrentNode);
         png = await resp.Content.ReadFromJsonAsync<PngInfo>();
     }
 

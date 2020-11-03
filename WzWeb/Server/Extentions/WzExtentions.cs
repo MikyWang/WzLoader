@@ -81,7 +81,7 @@ namespace WzWeb.Server.Extentions
         {
             if (fullPathToFile == null || wz_Node.FullPathToFile == fullPathToFile) return wz_Node;
             var pathes = fullPathToFile.Split('\\').ToList();
-            if (pathes[0] != "Base") pathes.Insert(0, "Base");
+            if (pathes[0] != wz_Node.FullPathToFile) pathes.Insert(0, wz_Node.FullPathToFile);
             return SearchNode(wz_Node, pathes);
 
         }
@@ -145,8 +145,8 @@ namespace WzWeb.Server.Extentions
             return new CharacterInfo
             {
                 Islot = infoNode.Nodes["islot"].Value.ToString(),
-                Vslot = infoNode.Nodes["vslot"].ToString(),
-                Cash = infoNode.Nodes["cash"].ToString()
+                Vslot = infoNode.Nodes["vslot"].Value.ToString(),
+                Cash = infoNode.Nodes["cash"].Value.ToString()
             };
         }
 
@@ -158,21 +158,32 @@ namespace WzWeb.Server.Extentions
             PngInfo pngInfo;
             if (inLinkNode != null)
             {
-                var link = inLinkNode.Value.ToString();
+                var link = inLinkNode.Value.ToString().Replace('/', '\\');
                 var node = wz_Node.GetNodeWzImage().Node.SearchNode(link);
                 pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
             }
             else if (outLinkNode != null)
             {
-                var link = outLinkNode.Value.ToString();
+                var link = outLinkNode.Value.ToString().Replace('/', '\\');
                 var node = baseNode.SearchNode(link);
                 pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
             }
             else
             {
-                pngInfo = wz_Node.GetValue<Wz_Png>().ToPngInfo();
+                pngInfo = wz_Node.GetValue<Wz_Png>()?.ToPngInfo();
             }
             return pngInfo;
+        }
+
+        public static CharacterMotion GetCharacterMotion(this Wz_Node wz_Node, Wz_Node baseNode)
+        {
+            var nodes = wz_Node.Nodes;
+            var actions = new Dictionary<string, CharacterAction>();
+            foreach (var acNode in nodes)
+            {
+                actions.Add(acNode.Text, acNode.GetCharacterAction(baseNode));
+            }
+            return new CharacterMotion { Name = wz_Node.Text, Motions = actions };
         }
 
         public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode)
@@ -183,14 +194,19 @@ namespace WzWeb.Server.Extentions
             {
                 configs.Add(acNode.Text, acNode.GetCharacterConfig(baseNode));
             }
-            return new CharacterAction { Configs = configs };
+            return new CharacterAction { Id = int.Parse(wz_Node.Text), Configs = configs };
         }
 
         public static CharacterConfig GetCharacterConfig(this Wz_Node wz_Node, Wz_Node baseNode)
         {
+            if (wz_Node.Value != null && wz_Node.Value is Wz_Uol)
+            {
+                wz_Node = wz_Node.GetValue<Wz_Uol>().HandleUol(wz_Node);
+            }
             var nodes = wz_Node.Nodes;
             var config = new CharacterConfig
             {
+                Name = wz_Node.Text,
                 Origin = nodes["origin"]?.GetValue<Wz_Vector>(),
                 PngInfo = wz_Node.GetPngInfo(baseNode),
                 Group = nodes["group"]?.Value?.ToString(),
@@ -224,6 +240,7 @@ namespace WzWeb.Server.Extentions
         {
             var map = new Dictionary<string, Point>();
             var mapNode = wz_Node.Nodes["map"];
+            if (mapNode == null) return null;
             foreach (var node in mapNode.Nodes)
             {
                 map.Add(node.Text, node.GetValue<Wz_Vector>());
