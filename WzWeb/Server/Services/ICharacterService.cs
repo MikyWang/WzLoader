@@ -10,8 +10,9 @@ namespace WzWeb.Server.Services
     public interface ICharacterService
     {
         public int DefaultID { get; }
+        public string DefaultMotionName { get; }
         public Wz_Node CharacterNode { get; }
         public IEnumerable<int> CharacterIDList { get; }
-        public Character GetCharacter(int id);
+        public CharacterCollection GetCharacter(int id, string motionName);
     }
 }

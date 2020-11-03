@@ -4,11 +4,34 @@
 @using Newtonsoft.Json
 @using WzWeb.Client.Services
 @using WzWeb.Shared.Character
-@inject HttpClient Http
+@inject IBrowserService BrowserService
 
 @if (character == null)
 {
     <Loading></Loading>
+}
+else
+{
+    foreach (var motion in character.CurrentHeadMotion.Actions)
+    {
+        foreach (var config in motion.Value.Configs)
+        {
+            var pngInfo = config.Value.PngInfo;
+            <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." style="width:@(pngInfo.Width+"px");height:@(pngInfo.Height+"px")" />
+        }
+    }
+
+    foreach (var motion in character.CurrentBodyMotion.Actions)
+    {
+        foreach (var config in motion.Value.Configs)
+        {
+            var pngInfo = config.Value.PngInfo;
+            if (pngInfo != null)
+            {
+                <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." style="width:@(pngInfo.Width + "px");height:@(pngInfo.Height + "px")" />
+            }
+        }
+    }
 }
 
 
@@ -17,6 +40,6 @@
 
     protected async override Task OnInitializedAsync()
     {
-        @*character = await Http.GetFromJsonAsync<Character>("api/Character");*@
+        character = await BrowserService.GetCharacter(2000, "walk1", 0);
     }
 }

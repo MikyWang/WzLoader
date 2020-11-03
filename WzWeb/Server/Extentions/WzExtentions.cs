@@ -178,12 +178,12 @@ namespace WzWeb.Server.Extentions
         public static CharacterMotion GetCharacterMotion(this Wz_Node wz_Node, Wz_Node baseNode)
         {
             var nodes = wz_Node.Nodes;
-            var actions = new Dictionary<string, CharacterAction>();
+            var actions = new Dictionary<int, CharacterAction>();
             foreach (var acNode in nodes)
             {
-                actions.Add(acNode.Text, acNode.GetCharacterAction(baseNode));
+                actions.Add(int.Parse(acNode.Text), acNode.GetCharacterAction(baseNode));
             }
-            return new CharacterMotion { Name = wz_Node.Text, Motions = actions };
+            return new CharacterMotion { Name = wz_Node.Text, Actions = actions };
         }
 
         public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode)

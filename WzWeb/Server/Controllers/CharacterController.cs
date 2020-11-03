@@ -27,15 +27,20 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpGet]
-        public Character Get()
+        public CharacterResponse Get()
         {
-            return GetCharacter(characterService.DefaultID);
+            var request = new CharacterRequest { CharacterId = characterService.DefaultID, MotionName = characterService.DefaultMotionName };
+            return GetCharacter(request);
         }
 
-        [HttpGet("{id}")]
-        public Character GetCharacter(int id)
+        [HttpPost("GetCharacter")]
+        public CharacterResponse GetCharacter(CharacterRequest request)
         {
-            return characterService.GetCharacter(id);
+            var collection = characterService.GetCharacter(request.CharacterId, request.MotionName);
+            return new CharacterResponse
+            {
+                CharacterCollection = collection
+            };
         }
     }
 }
