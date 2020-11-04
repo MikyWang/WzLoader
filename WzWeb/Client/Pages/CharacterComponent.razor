@@ -5,7 +5,7 @@
 @using WzWeb.Client.Services
 @using WzWeb.Shared.Character
 @using Blazor.Extensions.Canvas.Canvas2D
-@using Blazor.Extensions.Canvas.WebGL
+@using System.Drawing
 @inject IBrowserService BrowserService
 
 
@@ -19,8 +19,9 @@ else
     <div class="d-none">
         <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width+"px");height:@(character.Head.PngInfo.Height+"px")" @ref="HeadRef" />
         <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width+"px");height:@(character.Body.PngInfo.Height+"px")" @ref="BodyRef" />
+        <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width+"px");height:@(character.Arm.PngInfo.Height+"px")" @ref="ArmRef" />
     </div>
-    <BECanvas Width="500" Height="500" @ref="canvasReference"></BECanvas>
+    <BECanvas Width="200" Height="200" @ref="canvasReference"></BECanvas>
 
 }
 
@@ -33,12 +34,14 @@ else
 
     private ElementReference HeadRef;
     private ElementReference BodyRef;
+    private ElementReference ArmRef;
 
     private Character character;
 
     protected async override Task OnInitializedAsync()
     {
-        character = await BrowserService.GetCharacter(2000, "walk1", 0);
+        character = await BrowserService.GetCharacter(2000, "walk1", 1);
+        character.NeckPosition = new Point(100, 100);
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -52,8 +55,22 @@ else
     {
         if (context == null) context = await canvasReference.CreateCanvas2DAsync();
 
-        await context.DrawImageAsync(HeadRef, character.Head.Origin.X, character.Head.Origin.Y + (character.Head.PngInfo.Height / 2));
-        await context.DrawImageAsync(BodyRef, character.Body.Origin.X, character.Body.Origin.Y + (character.Body.PngInfo.Height / 2));
+        var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
+        await context.DrawImageAsync(BodyRef, drwaPosition.X, drwaPosition.Y);
+
+        drwaPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
+        await context.DrawImageAsync(HeadRef, drwaPosition.X, drwaPosition.Y);
+
+
+        drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
+        await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
+    }
+
+    private Point CalculateDrawPosition(Point srcPosition, CharacterConfig config)
+    {
+        var x = srcPosition.X - config.Origin.X;
+        var y = srcPosition.Y - config.Origin.Y;
+        return new Point(x, y);
     }
 
 }

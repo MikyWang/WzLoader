@@ -35,6 +35,15 @@ else
                 <UolComponent CurrentNode="@node"></UolComponent>
             </div>
         }
+        else if (node.Type == NodeType.Wz_Vector)
+        {
+            <div class="col-md-9">
+                <dl>
+                    <dt>@node.Text</dt>
+                    <dd>@node.Value</dd>
+                </dl>
+            </div>
+        }
         else
         {
             <div class="col-md-9">

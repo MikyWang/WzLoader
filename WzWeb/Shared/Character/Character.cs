@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Drawing;
+using System.Numerics;
+
 namespace WzWeb.Shared.Character
 {
     public class Character
@@ -7,6 +10,8 @@ namespace WzWeb.Shared.Character
         public CharacterMotion CurrentHeadMotion { get; set; }
         public CharacterMotion CurrentBodyMotion { get; set; }
         public string CurrentFrame { get; set; }
+        public Point NeckPosition { get; set; } = new Point();
+
 
         public CharacterConfig Body => CurrentBodyMotion.Actions[CurrentFrame].Configs["body"];
         public CharacterConfig Arm => CurrentBodyMotion.Actions[CurrentFrame].Configs["arm"];
@@ -20,6 +25,11 @@ namespace WzWeb.Shared.Character
         public CharacterConfig LHand => CurrentBodyMotion.Actions[CurrentFrame].Configs["lHand"];
         public CharacterConfig RHand => CurrentBodyMotion.Actions[CurrentFrame].Configs["rHand"];
         public CharacterConfig ArmOverHair => CurrentBodyMotion.Actions[CurrentFrame].Configs["armOverHair"];
+
+        public Point HeadPosition => new Point(NeckPosition.X - Head.Map["neck"].X, NeckPosition.Y - Head.Map["neck"].Y);
+        public Point BodyPosition => new Point(NeckPosition.X - Body.Map["neck"].X, NeckPosition.Y - Body.Map["neck"].Y);
+        public Point ArmPosition => new Point(BodyPosition.X + Body.Map["navel"].X - Arm.Map["navel"].X, BodyPosition.Y + Body.Map["navel"].Y - Arm.Map["navel"].Y);
+
 
     }
 }
