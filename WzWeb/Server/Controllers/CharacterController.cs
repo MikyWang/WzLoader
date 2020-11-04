@@ -42,5 +42,15 @@ namespace WzWeb.Server.Controllers
                 CharacterCollection = collection
             };
         }
+        [HttpGet("GetSkins")]
+        public IEnumerable<int> GetSkins()
+        {
+            return characterService.CharacterIDList;
+        }
+        [HttpGet("GetActions/{id}")]
+        public IEnumerable<string> GetActions(int id)
+        {
+            return characterService.GetActions(id);
+        }
     }
 }

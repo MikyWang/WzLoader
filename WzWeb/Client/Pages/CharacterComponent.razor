@@ -9,39 +9,165 @@
 @inject IBrowserService BrowserService
 
 
-@if (character == null)
+@if (IsInit)
 {
     <Loading></Loading>
 }
 else
 {
-
     <div class="d-none">
-        <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width+"px");height:@(character.Head.PngInfo.Height+"px")" @ref="HeadRef" />
-        <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width+"px");height:@(character.Body.PngInfo.Height+"px")" @ref="BodyRef" />
-        <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width+"px");height:@(character.Arm.PngInfo.Height+"px")" @ref="ArmRef" />
+        <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width + "px");height:@(character.Head.PngInfo.Height + "px")" @ref="HeadRef" />
+        <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width + "px");height:@(character.Body.PngInfo.Height + "px")" @ref="BodyRef" />
+        @if (character.Arm != null)
+        {
+            <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width + "px");height:@(character.Arm.PngInfo.Height + "px")" @ref="ArmRef" />
+        }
     </div>
-    <BECanvas Width="200" Height="200" @ref="canvasReference"></BECanvas>
 
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                <div class="p-2">
+                    <div class="d-flex flex-column mb-3">
+                        <div class="p-2 ">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">角色皮肤</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" style="width:150px" @onchange="ChangeSkin">
+                                    @for (int i = 0; i < Skins.Count; i++)
+                                    {
+                                        var index = i;
+                                        if (index == 0)
+                                        {
+                                            <option value="@Skins[index]" selected>@Skins[index]</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@Skins[index]">@Skins[index]</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">角色动作</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeAction">
+                                    @for (int i = 0; i < Actions.Count; i++)
+                                    {
+                                        var index = i;
+                                        if (index == 0)
+                                        {
+                                            <option value="@Actions[index]" selected>@Actions[index]</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@Actions[index]">@Actions[index]</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">当前帧</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeFrame">
+                                    @for (int i = 0; i < Frames.Count; i++)
+                                    {
+                                        var index = i;
+                                        if (index == 0)
+                                        {
+                                            <option value="@Frames[index]" selected>@Frames[index]</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@Frames[index]">@Frames[index]</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <div class="d-flex flex-column  mb-3  justify-content-center align-items-center">
+                        <div class="p-2">
+                            <BECanvas Width="200" Height="200" @ref="canvasReference"></BECanvas>
+                        </div>
+                        <div class="p-2">
+                            <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                                <div class="p-2">
+                                    <button type="button" class="btn btn-primary">播放帧动画</button>
+                                </div>
+                                <div class="p-2">
+                                    <button type="button" class="btn btn-primary">停止播放</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <div class="d-flex flex-column mb-3 justify-content-center">
+                        <div class="p-2 ">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 }
 
 
 @code {
 
+    #region Canvas
     private Canvas2DContext context;
-
     private BECanvasComponent canvasReference;
+    #endregion
 
+    #region 角色部位图片引用
     private ElementReference HeadRef;
     private ElementReference BodyRef;
     private ElementReference ArmRef;
+    #endregion
+
+    #region 后台数据
+    private IList<int> Skins;
+    private IList<string> Actions;
+    private IList<int> Frames;
+    #endregion
+
+    private int _currentSkin;
 
     private Character character;
+    private int currentSkin;
+    private string currentAction;
+    private int currentFrame;
+
+    private bool IsInit => character == null || Skins == null || Actions == null;
 
     protected async override Task OnInitializedAsync()
     {
-        character = await BrowserService.GetCharacter(2000, "walk1", 1);
-        character.NeckPosition = new Point(100, 100);
+        character = await BrowserService.GetDefaultCharacter();
+        Skins = await BrowserService.GetSkins();
+        await RefreshDataAsync();
+        currentSkin = character.Id;
+        currentAction = character.CurrentHeadMotion.Name;
+        currentFrame = int.Parse(character.CurrentFrame);
+
+    }
+
+    protected async Task RefreshDataAsync()
+    {
+        Actions = await BrowserService.GetActions(character.Id);
+        Frames = character.CurrentBodyMotion.Actions.Keys.Select(key => int.Parse(key)).ToList();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -51,9 +177,33 @@ else
 
     }
 
+    private async Task ChangeSkin(ChangeEventArgs eventArgs)
+    {
+        currentSkin = int.Parse(eventArgs.Value.ToString());
+        await RefreshDataAsync();
+        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
+        StateHasChanged();
+    }
+    private async Task ChangeAction(ChangeEventArgs eventArgs)
+    {
+        currentAction = eventArgs.Value.ToString();
+        await RefreshDataAsync();
+        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
+        StateHasChanged();
+    }
+    private async Task ChangeFrame(ChangeEventArgs eventArgs)
+    {
+        currentFrame = int.Parse(eventArgs.Value.ToString());
+        await RefreshDataAsync();
+        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
+        StateHasChanged();
+    }
+
     private async Task BuildCanvas()
     {
         if (context == null) context = await canvasReference.CreateCanvas2DAsync();
+
+        await context.ClearRectAsync(0, 0, 200, 200);
 
         var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
         await context.DrawImageAsync(BodyRef, drwaPosition.X, drwaPosition.Y);
@@ -61,9 +211,12 @@ else
         drwaPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
         await context.DrawImageAsync(HeadRef, drwaPosition.X, drwaPosition.Y);
 
+        if (character.Arm != null)
+        {
+            drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
+            await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
+        }
 
-        drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
-        await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
     }
 
     private Point CalculateDrawPosition(Point srcPosition, CharacterConfig config)

@@ -55,5 +55,12 @@ namespace WzWeb.Server.Services
 
             return match.Success ? int.Parse(match.Value) : 0;
         }
+
+        public IEnumerable<string> GetActions(int id)
+        {
+            var node = CharacterNode.Nodes.First(node => FormatID(node.Text) == id)?.GetImageNode();
+            if (node == null) return null;
+            return node.Nodes.Where(node=>(node.Text!="info")) .Select(node => node.Text);
+        }
     }
 }

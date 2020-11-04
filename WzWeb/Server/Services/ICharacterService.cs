@@ -14,5 +14,6 @@ namespace WzWeb.Server.Services
         public Wz_Node CharacterNode { get; }
         public IEnumerable<int> CharacterIDList { get; }
         public CharacterCollection GetCharacter(int id, string motionName);
+        public IEnumerable<string> GetActions(int id);
     }
 }
