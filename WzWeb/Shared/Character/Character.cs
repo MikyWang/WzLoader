@@ -6,7 +6,7 @@ namespace WzWeb.Shared.Character
         public int Id { get; set; }
         public CharacterMotion CurrentHeadMotion { get; set; }
         public CharacterMotion CurrentBodyMotion { get; set; }
-        public int CurrentFrame { get; set; }
+        public string CurrentFrame { get; set; }
 
         public CharacterConfig Body => CurrentBodyMotion.Actions[CurrentFrame].Configs["body"];
         public CharacterConfig Arm => CurrentBodyMotion.Actions[CurrentFrame].Configs["arm"];

@@ -54,7 +54,7 @@ namespace WzWeb.Client.Services
             return new Character
             {
                 Id = id,
-                CurrentFrame = frame,
+                CurrentFrame = frame.ToString(),
                 CurrentHeadMotion = extcollection.HeadMotion,
                 CurrentBodyMotion = extcollection.BodyMotion
             };

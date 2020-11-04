@@ -4,7 +4,10 @@
 @using Newtonsoft.Json
 @using WzWeb.Client.Services
 @using WzWeb.Shared.Character
+@using Blazor.Extensions.Canvas.Canvas2D
+@using Blazor.Extensions.Canvas.WebGL
 @inject IBrowserService BrowserService
+
 
 @if (character == null)
 {
@@ -12,34 +15,45 @@
 }
 else
 {
-    foreach (var motion in character.CurrentHeadMotion.Actions)
-    {
-        foreach (var config in motion.Value.Configs)
-        {
-            var pngInfo = config.Value.PngInfo;
-            <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." style="width:@(pngInfo.Width+"px");height:@(pngInfo.Height+"px")" />
-        }
-    }
 
-    foreach (var motion in character.CurrentBodyMotion.Actions)
-    {
-        foreach (var config in motion.Value.Configs)
-        {
-            var pngInfo = config.Value.PngInfo;
-            if (pngInfo != null)
-            {
-                <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." style="width:@(pngInfo.Width + "px");height:@(pngInfo.Height + "px")" />
-            }
-        }
-    }
+    <div class="d-none">
+        <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width+"px");height:@(character.Head.PngInfo.Height+"px")" @ref="HeadRef" />
+        <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width+"px");height:@(character.Body.PngInfo.Height+"px")" @ref="BodyRef" />
+    </div>
+    <BECanvas Width="500" Height="500" @ref="canvasReference"></BECanvas>
+
 }
 
 
 @code {
+
+    private Canvas2DContext context;
+
+    private BECanvasComponent canvasReference;
+
+    private ElementReference HeadRef;
+    private ElementReference BodyRef;
+
     private Character character;
 
     protected async override Task OnInitializedAsync()
     {
         character = await BrowserService.GetCharacter(2000, "walk1", 0);
     }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (character == null) return;
+        await BuildCanvas();
+
+    }
+
+    private async Task BuildCanvas()
+    {
+        if (context == null) context = await canvasReference.CreateCanvas2DAsync();
+
+        await context.DrawImageAsync(HeadRef, character.Head.Origin.X, character.Head.Origin.Y + (character.Head.PngInfo.Height / 2));
+        await context.DrawImageAsync(BodyRef, character.Body.Origin.X, character.Body.Origin.Y + (character.Body.PngInfo.Height / 2));
+    }
+
 }
