@@ -16,7 +16,8 @@ namespace WzWeb.Client.Services
         public IList<string> Actions { get; }
         public Character CurrentCharacter { get; }
         public Task Init();
-        public Task<Character> GetCharacter(int id, string MotionName, int Frame);
+        public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);
+        public Task<Character> LoadingCharacterAsync(int id, string motionName, int frame);
         public Task<Character> GetDefaultCharacter();
         public Task<IList<int>> GetSkins();
         public Task<IList<string>> GetActions(int characterId);

@@ -10,7 +10,7 @@ namespace WzWeb.Shared.Character
         public CharacterMotion CurrentHeadMotion { get; set; }
         public CharacterMotion CurrentBodyMotion { get; set; }
         public string CurrentFrame { get; set; }
-        public Point NeckPosition { get; set; } = new Point(100,100);
+        public Point NeckPosition { get; set; } = new Point(50, 50);
 
         public CharacterConfig Body => CurrentBodyMotion.Actions[CurrentFrame].Configs["body"];
         public CharacterConfig Arm => CurrentBodyMotion.Actions[CurrentFrame].Configs["arm"];

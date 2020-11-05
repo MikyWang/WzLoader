@@ -58,7 +58,13 @@ namespace WzWeb.Client.Services
             }
             return CurrentCharacter;
         }
-        public async Task<Character> GetCharacter(int id, string motionName, int frame)
+        public async Task<Character> GetCharacterAsync(int id, string motionName, int frame)
+        {
+            CurrentCharacter = await LoadingCharacterAsync(id, motionName, frame);
+            return CurrentCharacter;
+        }
+
+        public async Task<Character> LoadingCharacterAsync(int id, string motionName, int frame)
         {
             if (!LoadedCharacters.ContainsKey(id))
             {
@@ -69,19 +75,19 @@ namespace WzWeb.Client.Services
                 var request = new CharacterRequest { CharacterId = id, MotionName = motionName };
                 var response = await httpClient.PostAsJsonAsync<CharacterRequest>("api/character/GetCharacter", request);
                 var collection = (await response.Content.ReadFromJsonAsync<CharacterResponse>()).CharacterCollection;
+                if (collection == null) return null;
                 LoadedCharacters[id].Add(collection.HeadMotion.Name, collection);
             }
             var extcollection = LoadedCharacters[id][motionName];
-
-            CurrentCharacter = new Character
+            return new Character
             {
                 Id = id,
                 CurrentFrame = frame.ToString(),
                 CurrentHeadMotion = extcollection.HeadMotion,
                 CurrentBodyMotion = extcollection.BodyMotion
             };
-            return CurrentCharacter;
         }
+
         public async Task<IList<int>> GetSkins()
         {
             if (Skins?.Count > 0) return Skins;

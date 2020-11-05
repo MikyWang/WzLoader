@@ -6,6 +6,7 @@
 @using WzWeb.Shared.Character
 @using Blazor.Extensions.Canvas.Canvas2D
 @using System.Drawing
+@using System.Threading
 @inject IBrowserService BrowserService
 
 
@@ -40,7 +41,7 @@ else
                                         var index = i;
                                         if (index == 0)
                                         {
-                                            <option value="@Skins[index]" selected>@Skins[index]</option>
+                                            <option value="@Skins[index]">@Skins[index]</option>
                                         }
                                         else
                                         {
@@ -61,7 +62,7 @@ else
                                         var index = i;
                                         if (index == 0)
                                         {
-                                            <option value="@Actions[index]" selected>@Actions[index]</option>
+                                            <option value="@Actions[index]">@Actions[index]</option>
                                         }
                                         else
                                         {
@@ -76,13 +77,13 @@ else
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="inputGroupSelect01">当前帧</label>
                                 </div>
-                                <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeFrame">
+                                <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @bind="CurrentFrame">
                                     @for (int i = 0; i < Frames.Count; i++)
                                     {
                                         var index = i;
                                         if (index == 0)
                                         {
-                                            <option value="@Frames[index]" selected>@Frames[index]</option>
+                                            <option value="@Frames[index]">@Frames[index]</option>
                                         }
                                         else
                                         {
@@ -97,17 +98,31 @@ else
                 <div class="p-2">
                     <div class="d-flex flex-column  mb-3  justify-content-center align-items-center">
                         <div class="p-2">
-                            <BECanvas Width="200" Height="200" @ref="canvasReference"></BECanvas>
+                            <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
                         </div>
                         <div class="p-2">
-                            <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
-                                <div class="p-2">
-                                    <button type="button" class="btn btn-primary">播放帧动画</button>
+                            @if (loading)
+                            {
+                                <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" disabled>播放帧动画</button>
+                                    </div>
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" disabled>停止播放</button>
+                                    </div>
                                 </div>
-                                <div class="p-2">
-                                    <button type="button" class="btn btn-primary">停止播放</button>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" @onclick="PlayAnimation">播放帧动画</button>
+                                    </div>
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" @onclick="StopAnimation">停止播放</button>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -144,67 +159,82 @@ else
     private IList<int> Frames;
     #endregion
 
-    private int _currentSkin;
-
     private Character character;
     private int currentSkin;
     private string currentAction;
-    private int currentFrame;
+
+    private int _currentFrame;
+
+    private int CurrentFrame
+    {
+        get
+        {
+            return _currentFrame;
+        }
+        set
+        {
+            if (value > Frames.Count - 1) value = 0;
+            _currentFrame = value;
+            BrowserService.CurrentCharacter.CurrentFrame = CurrentFrame.ToString();
+            character = BrowserService.CurrentCharacter;
+            StateHasChanged();
+        }
+    }
+
+    private Timer timer;
 
     private bool IsInit => character == null || Skins == null || Actions == null;
+    private bool loading = true;
 
     protected async override Task OnInitializedAsync()
     {
-        character = await BrowserService.GetDefaultCharacter();
+        timer = new Timer(new TimerCallback(Animate), null, Timeout.Infinite, 500);
         Skins = await BrowserService.GetSkins();
-        await RefreshDataAsync();
+        character = await BrowserService.GetDefaultCharacter();
         currentSkin = character.Id;
         currentAction = character.CurrentHeadMotion.Name;
-        currentFrame = int.Parse(character.CurrentFrame);
-
+        await RefreshDataAsync();
     }
 
     protected async Task RefreshDataAsync()
     {
+        loading = true;
+        StopAnimation();
         Actions = await BrowserService.GetActions(character.Id);
+        character = await BrowserService.GetCharacterAsync(currentSkin, currentAction, 0);
         Frames = character.CurrentBodyMotion.Actions.Keys.Select(key => int.Parse(key)).ToList();
+        CurrentFrame = 0;
+        loading = false;
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (character == null) return;
         await BuildCanvas();
-
     }
 
     private async Task ChangeSkin(ChangeEventArgs eventArgs)
     {
         currentSkin = int.Parse(eventArgs.Value.ToString());
         await RefreshDataAsync();
-        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
-        StateHasChanged();
     }
     private async Task ChangeAction(ChangeEventArgs eventArgs)
     {
         currentAction = eventArgs.Value.ToString();
         await RefreshDataAsync();
-        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
-        StateHasChanged();
-    }
-    private async Task ChangeFrame(ChangeEventArgs eventArgs)
-    {
-        currentFrame = int.Parse(eventArgs.Value.ToString());
-        await RefreshDataAsync();
-        character = await BrowserService.GetCharacter(currentSkin, currentAction, currentFrame);
-        StateHasChanged();
     }
 
     private async Task BuildCanvas()
     {
         if (context == null) context = await canvasReference.CreateCanvas2DAsync();
 
-        await context.ClearRectAsync(0, 0, 200, 200);
+        await context.ClearRectAsync(0, 0, 100, 100);
 
+        if (loading)
+        {
+            await context.FillTextAsync("Loading...", 35, 50);
+            return;
+        }
         var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
         await context.DrawImageAsync(BodyRef, drwaPosition.X, drwaPosition.Y);
 
@@ -224,6 +254,24 @@ else
         var x = srcPosition.X - config.Origin.X;
         var y = srcPosition.Y - config.Origin.Y;
         return new Point(x, y);
+    }
+
+    private void PlayAnimation()
+    {
+        timer.Change(0, 300);
+    }
+
+    private void StopAnimation()
+    {
+        timer.Change(Timeout.Infinite, 300);
+    }
+
+    /// <summary>
+    ///计时器回调
+    /// </summary>
+    private void Animate(object value)
+    {
+        CurrentFrame++;
     }
 
 }
