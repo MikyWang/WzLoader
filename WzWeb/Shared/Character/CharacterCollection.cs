@@ -21,6 +21,7 @@ namespace WzWeb.Shared.Character
         public CharacterInfo BodyInfo { get; set; }
         public CharacterMotion HeadMotion { get; set; }
         public CharacterMotion BodyMotion { get; set; }
+        public Face Face { get; set; }
     }
 
     public class CharacterInfo
@@ -40,6 +41,11 @@ namespace WzWeb.Shared.Character
     {
         public int Id { get; set; }
         public Dictionary<string, CharacterConfig> Configs { get; set; }
+        /// <summary>
+        /// 0无脸 1有脸
+        /// </summary>
+        public string HasFace { get; set; }
+        public string Delay { get; set; }
     }
 
     public class CharacterConfig

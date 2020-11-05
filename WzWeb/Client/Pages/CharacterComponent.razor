@@ -226,13 +226,18 @@ else
 
     private async Task BuildCanvas()
     {
-        if (context == null) context = await canvasReference.CreateCanvas2DAsync();
+        if (context == null)
+        {
+            context = await canvasReference.CreateCanvas2DAsync();
+            await context.SetTextAlignAsync(TextAlign.Center);
+            await context.SetTextBaselineAsync(TextBaseline.Middle);
+        }
 
         await context.ClearRectAsync(0, 0, 100, 100);
 
         if (loading)
         {
-            await context.FillTextAsync("Loading...", 35, 50);
+            await context.FillTextAsync("Loading...", 50, 50);
             return;
         }
         var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);

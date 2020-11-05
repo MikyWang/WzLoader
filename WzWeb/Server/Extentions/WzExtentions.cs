@@ -188,13 +188,20 @@ namespace WzWeb.Server.Extentions
 
         public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode)
         {
-            var nodes = wz_Node.Nodes;
+            var nodes = wz_Node.Nodes.Where(node => node.Text != "face" || node.Text != "delay");
             var configs = new Dictionary<string, CharacterConfig>();
             foreach (var acNode in nodes)
             {
                 configs.Add(acNode.Text, acNode.GetCharacterConfig(baseNode));
             }
-            return new CharacterAction { Id = int.Parse(wz_Node.Text), Configs = configs };
+
+            return new CharacterAction
+            {
+                Id = int.Parse(wz_Node.Text),
+                Configs = configs,
+                Delay = wz_Node.Nodes["delay"]?.Value.ToString(),
+                HasFace = wz_Node.Nodes["face"]?.Value.ToString()
+            };
         }
 
         public static CharacterConfig GetCharacterConfig(this Wz_Node wz_Node, Wz_Node baseNode)
