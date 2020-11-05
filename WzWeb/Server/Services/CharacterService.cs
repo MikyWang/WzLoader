@@ -29,7 +29,6 @@ namespace WzWeb.Server.Services
         {
             this.wzLoader = wzLoader;
             CharacterIDList = CharacterNode.Nodes.Select(node => FormatID(node.Text)).Where(id => id != 0);
-            CharacterIDList = CharacterIDList.Where((id, i) => CharacterIDList.Any(z => id == z));
             FaceIDList = FaceNode.Nodes.Select(nd => FormatFaceId(nd.Text)).Where(id => id != 0);
         }
         public CharacterCollection GetCharacter(int id, string motionName)
@@ -44,14 +43,13 @@ namespace WzWeb.Server.Services
 
             if (headNode == null || bodyNode == null) return null;
 
-
             CharacterCollection character = new CharacterCollection
             {
                 Id = id,
                 HeadInfo = headNode.GetCharacterInfo(),
-                HeadMotion = headNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode),
+                HeadMotion = headNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode, ConfigType.Head),
                 BodyInfo = bodyNode.GetCharacterInfo(),
-                BodyMotion = bodyNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode),
+                BodyMotion = bodyNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode, ConfigType.Body),
             };
 
             return character;
@@ -75,7 +73,7 @@ namespace WzWeb.Server.Services
             {
                 FaceId = faceId,
                 FaceInfo = node.GetCharacterInfo(),
-                FaceMotion = motionNode.GetCharacterMotion(FaceNode),
+                FaceMotion = motionNode.GetCharacterMotion(CharacterNode, ConfigType.Face),
                 FaceName = faceString
             };
 

@@ -21,7 +21,6 @@ namespace WzWeb.Shared.Character
         public CharacterInfo BodyInfo { get; set; }
         public CharacterMotion HeadMotion { get; set; }
         public CharacterMotion BodyMotion { get; set; }
-        public Face Face { get; set; }
     }
 
     public class CharacterInfo
@@ -64,6 +63,13 @@ namespace WzWeb.Shared.Character
         public string Rotate { get; set; }
         public Point Vector { get; set; }
         public string Flip { get; set; }
+    }
+
+    public enum ConfigType
+    {
+        Head,
+        Body,
+        Face
     }
 
 }

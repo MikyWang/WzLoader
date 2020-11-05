@@ -19,10 +19,12 @@ else
     <div class="d-none">
         <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width + "px");height:@(character.Head.PngInfo.Height + "px")" @ref="HeadRef" />
         <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width + "px");height:@(character.Body.PngInfo.Height + "px")" @ref="BodyRef" />
+        <img src="data:image/png;base64,@(character.Face.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Face.PngInfo.Width + "px");height:@(character.Face.PngInfo.Height + "px")" @ref="FaceRef" />
         @if (character.Arm != null)
         {
             <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width + "px");height:@(character.Arm.PngInfo.Height + "px")" @ref="ArmRef" />
         }
+
     </div>
 
     <div class="row">
@@ -151,6 +153,7 @@ else
     private ElementReference HeadRef;
     private ElementReference BodyRef;
     private ElementReference ArmRef;
+    private ElementReference FaceRef;
     #endregion
 
     #region 后台数据
@@ -250,6 +253,11 @@ else
         {
             drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
             await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
+        }
+        if (character.HasFace)
+        {
+            drwaPosition = CalculateDrawPosition(character.FacePosition, character.Face);
+            await context.DrawImageAsync(FaceRef, drwaPosition.X, drwaPosition.Y);
         }
 
     }

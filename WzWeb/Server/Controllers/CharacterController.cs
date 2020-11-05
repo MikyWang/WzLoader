@@ -33,6 +33,12 @@ namespace WzWeb.Server.Controllers
             return GetCharacter(request);
         }
 
+        [HttpGet("GetDefaultFace")]
+        public Face GetDefaultFace()
+        {
+            return characterService.GetFace(characterService.DefaultFaceID, characterService.DefaultFaceMotionName);
+        }
+
         [HttpPost("GetCharacter")]
         public CharacterResponse GetCharacter(CharacterRequest request)
         {

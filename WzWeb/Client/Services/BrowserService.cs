@@ -16,6 +16,7 @@ namespace WzWeb.Client.Services
         public BrowserConfig Config { get; private set; }
         public bool HasInit { get; private set; }
         public Character CurrentCharacter { get; private set; }
+        public Face CurrentFace { get; private set; }
         public string NodePath { get; set; }
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; } = new Dictionary<int, IDictionary<string, CharacterCollection>>();
         public IList<int> Skins { get; private set; }
@@ -42,6 +43,10 @@ namespace WzWeb.Client.Services
         }
         public async Task<Character> GetDefaultCharacter()
         {
+            if (CurrentFace == null)
+            {
+                CurrentFace = await httpClient.GetFromJsonAsync<Face>("api/character/GetDefaultFace");
+            }
             if (CurrentCharacter == null)
             {
                 var response = await httpClient.GetFromJsonAsync<CharacterResponse>("api/character");
@@ -52,8 +57,10 @@ namespace WzWeb.Client.Services
                 {
                     Id = collection.Id,
                     CurrentFrame = "0",
+                    CurrentFaceFrame = "0",
                     CurrentHeadMotion = collection.HeadMotion,
-                    CurrentBodyMotion = collection.BodyMotion
+                    CurrentBodyMotion = collection.BodyMotion,
+                    CurrentFaceMotion = CurrentFace.FaceMotion
                 };
             }
             return CurrentCharacter;
@@ -83,8 +90,10 @@ namespace WzWeb.Client.Services
             {
                 Id = id,
                 CurrentFrame = frame.ToString(),
+                CurrentFaceFrame = "0",
                 CurrentHeadMotion = extcollection.HeadMotion,
-                CurrentBodyMotion = extcollection.BodyMotion
+                CurrentBodyMotion = extcollection.BodyMotion,
+                CurrentFaceMotion = CurrentFace.FaceMotion
             };
         }
 

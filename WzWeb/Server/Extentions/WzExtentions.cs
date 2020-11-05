@@ -175,20 +175,34 @@ namespace WzWeb.Server.Extentions
             return pngInfo;
         }
 
-        public static CharacterMotion GetCharacterMotion(this Wz_Node wz_Node, Wz_Node baseNode)
+        public static CharacterMotion GetCharacterMotion(this Wz_Node wz_Node, Wz_Node baseNode, ConfigType type)
         {
             var nodes = wz_Node.Nodes;
             var actions = new Dictionary<string, CharacterAction>();
             foreach (var acNode in nodes)
             {
-                actions.Add(acNode.Text, acNode.GetCharacterAction(baseNode));
+                actions.Add(acNode.Text, acNode.GetCharacterAction(baseNode, type));
             }
             return new CharacterMotion { Name = wz_Node.Text, Actions = actions };
         }
 
-        public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode)
+        public static CharacterAction GetCharacterAction(this Wz_Node wz_Node, Wz_Node baseNode, ConfigType type)
         {
-            var nodes = wz_Node.Nodes.Where(node => node.Text != "face" || node.Text != "delay");
+            Func<Wz_Node, bool> filter;
+            switch (type)
+            {
+                case ConfigType.Head:
+                case ConfigType.Body:
+                    filter = node => node.Text != "face" || node.Text != "delay";
+                    break;
+                case ConfigType.Face:
+                    filter = node => node.Text != "delay";
+                    break;
+                default:
+                    filter = node => node.Text != "face" || node.Text != "delay";
+                    break;
+            }
+            var nodes = wz_Node.Nodes.Where(filter);
             var configs = new Dictionary<string, CharacterConfig>();
             foreach (var acNode in nodes)
             {
