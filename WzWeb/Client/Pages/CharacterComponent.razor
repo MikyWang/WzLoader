@@ -20,18 +20,36 @@ else
         <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width + "px");height:@(character.Head.PngInfo.Height + "px")" @ref="HeadRef" />
         <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width + "px");height:@(character.Body.PngInfo.Height + "px")" @ref="BodyRef" />
         <img src="data:image/png;base64,@(character.Face.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Face.PngInfo.Width + "px");height:@(character.Face.PngInfo.Height + "px")" @ref="FaceRef" />
+        @switch (character.EarType)
+        {
+            case EarType.Ear:
+                <img src="data:image/png;base64,@(character.Ear.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Ear.PngInfo.Width + "px");height:@(character.Ear.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            case EarType.LefEar:
+                <img src="data:image/png;base64,@(character.LefEar.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.LefEar.PngInfo.Width + "px");height:@(character.LefEar.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            case EarType.HighLefEar:
+                <img src="data:image/png;base64,@(character.HighLefEar.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HighLefEar.PngInfo.Width + "px");height:@(character.HighLefEar.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            default:
+                break;
+        }
         @if (character.Arm != null)
         {
             <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width + "px");height:@(character.Arm.PngInfo.Height + "px")" @ref="ArmRef" />
+        }
+        @if (character.Hand != null)
+        {
+            <img src="data:image/png;base64,@(character.Hand.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Hand.PngInfo.Width + "px");height:@(character.Hand.PngInfo.Height + "px")" @ref="HandRef" />
         }
 
     </div>
 
     <div class="row">
         <div class="col-12">
-            <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+            <div class="d-flex flex-column mb-3 justify-content-center align-items-center">
                 <div class="p-2">
-                    <div class="d-flex flex-column mb-3">
+                    <div class="d-flex flex-row mb-3">
                         <div class="p-2 ">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -95,48 +113,72 @@ else
                                 </select>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="p-2">
-                    <div class="d-flex flex-column  mb-3  justify-content-center align-items-center">
                         <div class="p-2">
-                            <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
-                        </div>
-                        <div class="p-2">
-                            @if (loading)
-                            {
-                                <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
-                                    <div class="p-2">
-                                        <button type="button" class="btn btn-primary" disabled>播放帧动画</button>
-                                    </div>
-                                    <div class="p-2">
-                                        <button type="button" class="btn btn-primary" disabled>停止播放</button>
-                                    </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">角色耳朵</label>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
-                                    <div class="p-2">
-                                        <button type="button" class="btn btn-primary" @onclick="PlayAnimation">播放帧动画</button>
-                                    </div>
-                                    <div class="p-2">
-                                        <button type="button" class="btn btn-primary" @onclick="StopAnimation">停止播放</button>
-                                    </div>
-                                </div>
-                            }
+                                <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeEar">
+                                    @{
+                                        var names = (EarType[])Enum.GetValues(typeof(EarType));
+                                        @for (int i = 0; i < names.Length; i++)
+                                        {
+                                            var index = i;
+                                            <option value="@((int)names[index])">@names[index].ToString()</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="p-2">
-                    <div class="d-flex flex-column mb-3 justify-content-center">
-                        <div class="p-2 ">
+                    <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                        <div class="p-2">
 
                         </div>
+                        <div class="p-2">
+                            <div class="d-flex flex-column  mb-3  justify-content-center align-items-center">
+                                <div class="p-2">
+                                    <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
+                                </div>
+                                <div class="p-2">
+                                    @if (loading)
+                                    {
+                                        <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                                            <div class="p-2">
+                                                <button type="button" class="btn btn-primary" disabled>播放帧动画</button>
+                                            </div>
+                                            <div class="p-2">
+                                                <button type="button" class="btn btn-primary" disabled>停止播放</button>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
+                                            <div class="p-2">
+                                                <button type="button" class="btn btn-primary" @onclick="PlayAnimation">播放帧动画</button>
+                                            </div>
+                                            <div class="p-2">
+                                                <button type="button" class="btn btn-primary" @onclick="StopAnimation">停止播放</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="d-flex flex-column mb-3 justify-content-center">
+                                <div class="p-2 ">
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
-
         </div>
     </div>
 }
@@ -154,6 +196,8 @@ else
     private ElementReference BodyRef;
     private ElementReference ArmRef;
     private ElementReference FaceRef;
+    private ElementReference HandRef;
+    private ElementReference EarRef;
     #endregion
 
     #region 后台数据
@@ -165,6 +209,7 @@ else
     private Character character;
     private int currentSkin;
     private string currentAction;
+    private EarType currentEarType;
 
     private int _currentFrame;
 
@@ -207,6 +252,7 @@ else
         character = await BrowserService.GetCharacterAsync(currentSkin, currentAction, 0);
         Frames = character.CurrentBodyMotion.Actions.Keys.Select(key => int.Parse(key)).ToList();
         CurrentFrame = 0;
+        character.EarType = currentEarType;
         loading = false;
     }
 
@@ -216,6 +262,7 @@ else
         await BuildCanvas();
     }
 
+    #region 换装相关函数
     private async Task ChangeSkin(ChangeEventArgs eventArgs)
     {
         currentSkin = int.Parse(eventArgs.Value.ToString());
@@ -226,6 +273,12 @@ else
         currentAction = eventArgs.Value.ToString();
         await RefreshDataAsync();
     }
+    private async Task ChangeEar(ChangeEventArgs eventArgs)
+    {
+        currentEarType = (EarType)(int.Parse(eventArgs.Value.ToString()));
+        await RefreshDataAsync();
+    }
+    #endregion
 
     private async Task BuildCanvas()
     {
@@ -249,10 +302,22 @@ else
         drwaPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
         await context.DrawImageAsync(HeadRef, drwaPosition.X, drwaPosition.Y);
 
+
+        if (character.EarType != EarType.Normal)
+        {
+            drwaPosition = CalculateDrawPosition(character.EarPosition, character.Ear);
+            await context.DrawImageAsync(EarRef, drwaPosition.X, drwaPosition.Y);
+        }
+
         if (character.Arm != null)
         {
             drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
             await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
+        }
+        if (character.Hand != null)
+        {
+            drwaPosition = CalculateDrawPosition(character.HandPosition, character.Hand);
+            await context.DrawImageAsync(HandRef, drwaPosition.X, drwaPosition.Y);
         }
         if (character.HasFace)
         {
@@ -269,6 +334,8 @@ else
         return new Point(x, y);
     }
 
+
+    #region 动画相关
     private void PlayAnimation()
     {
         timer.Change(0, 300);
@@ -286,5 +353,5 @@ else
     {
         CurrentFrame++;
     }
-
+    #endregion
 }

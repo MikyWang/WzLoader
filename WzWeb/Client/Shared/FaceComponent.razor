@@ -1,5 +1,38 @@
-﻿<h3>Component1</h3>
+﻿@using WzWeb.Client.Services;
+@using WzWeb.Shared
+@inject IBrowserService BrowserService
+
+<div class="card">
+    <div class="card-header">
+        <form class="form row">
+            @if (hasNext)
+            {
+                <input class="form-control" type="search" placeholder="正在加载节点..." aria-label="Search" value=@nodeText @oninput="SearchNode" readonly>
+            }
+            else
+            {
+                <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@nodeText @oninput="SearchNode">
+            }
+
+        </form>
+    </div>
+    <FixedHeightTemplate Percentage="40">
+        <div class="card-body " style="padding:0rem">
+            <div class="list-group list-group-flush">
+                @foreach (var node in searchNodes)
+                {
+                    <div class="list-group-item">
+                        <NodeLink CurrentNode="@node"></NodeLink>
+                    </div>
+                }
+            </div>
+        </div>
+    </FixedHeightTemplate>
+</div>
+
 
 @code {
+
+    private bool hasNext = true;
 
 }

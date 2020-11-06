@@ -34,17 +34,22 @@ namespace WzWeb.Shared.Character
     {
         public string Name { get; set; }
         public Dictionary<string, CharacterAction> Actions { get; set; }
+
+        public CharacterAction this[string key] => Actions.ContainsKey(key) ? Actions[key] : null;
     }
 
     public class CharacterAction
     {
-        public int Id { get; set; }
-        public Dictionary<string, CharacterConfig> Configs { get; set; }
-        /// <summary>
-        /// 0无脸 1有脸
-        /// </summary>
+        /// <summary>0无脸 1有脸</summary>
+
         public string HasFace { get; set; }
+        public int Id { get; set; }
         public string Delay { get; set; }
+        public Dictionary<string, CharacterConfig> Configs { get; set; }
+
+        public CharacterConfig this[string key] => Configs.ContainsKey(key) ? Configs[key] : null;
+
+
     }
 
     public class CharacterConfig
@@ -63,6 +68,8 @@ namespace WzWeb.Shared.Character
         public string Rotate { get; set; }
         public Point Vector { get; set; }
         public string Flip { get; set; }
+
+        public Point this[string key] => Map.ContainsKey(key) ? Map[key] : new Point();
     }
 
     public enum ConfigType
@@ -72,4 +79,11 @@ namespace WzWeb.Shared.Character
         Face
     }
 
+    public enum EarType
+    {
+        Normal,
+        Ear,
+        LefEar,
+        HighLefEar
+    }
 }
