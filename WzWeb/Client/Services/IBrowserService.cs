@@ -14,7 +14,7 @@ namespace WzWeb.Client.Services
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; }
         public IList<int> Skins { get; }
         public IList<string> Actions { get; }
-        public IList<Face> Faces { get; }
+        public List<Face> Faces { get; }
         public Character CurrentCharacter { get; }
         public Task Init();
         public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);
@@ -22,6 +22,6 @@ namespace WzWeb.Client.Services
         public Task<Character> GetDefaultCharacter();
         public Task<IList<int>> GetSkins();
         public Task<IList<string>> GetActions(int characterId);
-        public Task<ListResponse<Face>> GetFaces();
+        public Task<ListResponse<Face>> GetFaces(int number);
     }
 }

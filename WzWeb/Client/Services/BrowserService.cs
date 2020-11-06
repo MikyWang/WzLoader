@@ -21,7 +21,7 @@ namespace WzWeb.Client.Services
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; } = new Dictionary<int, IDictionary<string, CharacterCollection>>();
         public IList<int> Skins { get; private set; }
         public IList<string> Actions { get; private set; }
-        public IList<Face> Faces { get; private set; }
+        public List<Face> Faces { get; private set; }
 
         private readonly IJSRuntime jSRuntime;
         private readonly HttpClient httpClient;
@@ -98,21 +98,21 @@ namespace WzWeb.Client.Services
             };
         }
 
-        public async Task<ListResponse<Face>> GetFaces()
+        public async Task<ListResponse<Face>> GetFaces(int number)
         {
+            if (Faces == null) Faces = new List<Face>();
+
             var request = new ListRequest<Face>
             {
-                Num = 10,
+                Num = number,
                 Parameter = null,
-                Start = 0
+                Start = Faces.Count
             };
-            if (Faces != null)
-            {
-                request.Start = Faces.Count;
-            }
 
             var response = await httpClient.PostAsJsonAsync<ListRequest<Face>>("api/character/GetFaces", request);
-            return (await response.Content.ReadFromJsonAsync<ListResponse<Face>>());
+            var faces = await response.Content.ReadFromJsonAsync<ListResponse<Face>>();
+            Faces.AddRange(faces.Results);
+            return faces;
         }
 
         public async Task<IList<int>> GetSkins()

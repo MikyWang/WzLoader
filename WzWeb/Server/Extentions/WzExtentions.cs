@@ -144,9 +144,9 @@ namespace WzWeb.Server.Extentions
 
             return new CharacterInfo
             {
-                Islot = infoNode.Nodes["islot"].Value.ToString(),
-                Vslot = infoNode.Nodes["vslot"].Value.ToString(),
-                Cash = infoNode.Nodes["cash"].Value.ToString()
+                Islot = infoNode.Nodes["islot"]?.Value.ToString(),
+                Vslot = infoNode.Nodes["vslot"]?.Value.ToString(),
+                Cash = infoNode.Nodes["cash"]?.Value.ToString()
             };
         }
 

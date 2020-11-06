@@ -70,7 +70,23 @@ namespace WzWeb.Server.Services
 
             var node = FaceNode.Nodes.First(nd => FormatFaceId(nd.Text) == faceId).GetImageNode();
             var motionNode = node.SearchNode(faceMotionName);
-            var faceString = FaceStringNode.SearchNode(faceId.ToString())?.Nodes["name"].Value.ToString();
+            var faceStringNode = FaceStringNode.SearchNode(faceId.ToString());
+
+            //ToDo:需修复脸型不正确数据
+            string faceString;
+            if (faceStringNode == null)
+            {
+                faceString = null;
+            }
+            else if (faceStringNode.Nodes["name"] == null)
+            {
+                faceString = $"{faceStringNode.Text}:{faceStringNode.Value}";
+            }
+            else
+            {
+                faceString = faceStringNode.Nodes["name"].Value.ToString();
+            }
+
             return new Face
             {
                 FaceId = faceId,
