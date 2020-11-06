@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WzLib;
 using WzWeb.Server.Extentions;
+using WzWeb.Shared;
 using WzWeb.Shared.Character;
 
 namespace WzWeb.Server.Services

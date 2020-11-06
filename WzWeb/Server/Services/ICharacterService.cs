@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WzLib;
+using WzWeb.Shared;
 using WzWeb.Shared.Character;
 
 namespace WzWeb.Server.Services
@@ -22,6 +23,7 @@ namespace WzWeb.Server.Services
         public CharacterCollection GetCharacter(int id, string motionName);
         public IEnumerable<string> GetActions(int id);
         public Face GetFace(int faceId, string faceMotionName);
+        public IEnumerable<Face> GetFaces(ListRequest<Face> request);
 
     }
 }

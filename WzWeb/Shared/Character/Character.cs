@@ -13,29 +13,54 @@ namespace WzWeb.Shared.Character
 
         public string CurrentFrame { get; set; }
         public string CurrentFaceFrame { get; set; }
+        public EarType EarType { get; set; } = EarType.Normal;
         public Point NeckPosition { get; set; } = new Point(50, 50);
 
-        public CharacterConfig Body => CurrentBodyMotion.Actions[CurrentFrame].Configs["body"];
-        public CharacterConfig Face => CurrentFaceMotion?.Actions[CurrentFaceFrame].Configs["face"];
-        public CharacterConfig Arm => CurrentBodyMotion.Actions[CurrentFrame].Configs["arm"];
-        public bool HasFace => CurrentBodyMotion.Actions[CurrentFrame].HasFace == "1";
-        public int Delay => int.Parse(CurrentBodyMotion.Actions[CurrentFrame].Delay);
-        public CharacterConfig Head => CurrentHeadMotion.Actions[CurrentFrame].Configs["head"];
-        public CharacterConfig Ear => CurrentHeadMotion.Actions[CurrentFrame].Configs["ear"];
-        public CharacterConfig LefEar => CurrentHeadMotion.Actions[CurrentFrame].Configs["lefEar"];
-        public CharacterConfig HighLefEar => CurrentHeadMotion.Actions[CurrentFrame].Configs["highlefEar"];
-        public CharacterConfig Hand => CurrentBodyMotion.Actions[CurrentFrame].Configs["hand"];
-        public CharacterConfig LHand => CurrentBodyMotion.Actions[CurrentFrame].Configs["lHand"];
-        public CharacterConfig RHand => CurrentBodyMotion.Actions[CurrentFrame].Configs["rHand"];
-        public CharacterConfig ArmOverHair => CurrentBodyMotion.Actions[CurrentFrame].Configs["armOverHair"];
 
-        public Point HeadPosition => new Point(NeckPosition.X - Head.Map["neck"].X, NeckPosition.Y - Head.Map["neck"].Y);
-        public Point BodyPosition => new Point(NeckPosition.X - Body.Map["neck"].X, NeckPosition.Y - Body.Map["neck"].Y);
-        public Point ArmPosition => new Point(BodyPosition.X + Body.Map["navel"].X - Arm.Map["navel"].X, BodyPosition.Y + Body.Map["navel"].Y - Arm.Map["navel"].Y);
+        public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
+        public int Delay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
+
+        public CharacterConfig Body => CurrentBodyMotion[CurrentFrame]["body"];
+        public CharacterConfig Face => CurrentFaceMotion[CurrentFaceFrame]["face"];
+        public CharacterConfig Arm => CurrentBodyMotion[CurrentFrame]["arm"];
+        public CharacterConfig Head => CurrentHeadMotion[CurrentFrame]["head"];
+        public CharacterConfig Ear => CurrentHeadMotion[CurrentFrame]["ear"];
+        public CharacterConfig LefEar => CurrentHeadMotion[CurrentFrame]["lefEar"];
+        public CharacterConfig HighLefEar => CurrentHeadMotion[CurrentFrame]["highlefEar"];
+        public CharacterConfig Hand => CurrentBodyMotion[CurrentFrame]["hand"];
+        public CharacterConfig LHand => CurrentBodyMotion[CurrentFrame]["lHand"];
+        public CharacterConfig RHand => CurrentBodyMotion[CurrentFrame]["rHand"];
+        public CharacterConfig ArmOverHair => CurrentBodyMotion[CurrentFrame]["armOverHair"];
+
+        public Point HeadPosition => new Point
+        {
+            X = NeckPosition.X - Head["neck"].X,
+            Y = NeckPosition.Y - Head["neck"].Y
+        };
+        public Point EarPosition => new Point
+        {
+            X = NeckPosition.X - Ear["neck"].X,
+            Y = NeckPosition.Y - Ear["neck"].Y
+        };
+        public Point BodyPosition => new Point
+        {
+            X = NeckPosition.X - Body["neck"].X,
+            Y = NeckPosition.Y - Body["neck"].Y
+        };
+        public Point ArmPosition => new Point
+        {
+            X = BodyPosition.X + Body["navel"].X - Arm["navel"].X,
+            Y = BodyPosition.Y + Body["navel"].Y - Arm["navel"].Y
+        };
+        public Point HandPosition => new Point
+        {
+            X = BodyPosition.X + Body["navel"].X - Hand["navel"].X,
+            Y = BodyPosition.Y + Body["navel"].Y - Hand["navel"].Y
+        };
         public Point FacePosition => new Point
         {
-            X = HeadPosition.X + Head.Map["brow"].X - Face.Map["brow"].X,
-            Y = HeadPosition.Y + Head.Map["brow"].Y - Face.Map["brow"].Y
+            X = HeadPosition.X + Head["brow"].X - Face["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - Face["brow"].Y
         };
     }
 }
