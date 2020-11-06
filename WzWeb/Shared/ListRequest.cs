@@ -11,7 +11,7 @@ namespace WzWeb.Shared
 
     public class ListResponse<T>
     {
-        public IEnumerable<T> Results { get; set; }
+        public IList<T> Results { get; set; }
         public bool HasNext { get; set; }
     }
 }

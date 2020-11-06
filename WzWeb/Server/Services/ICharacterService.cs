@@ -23,7 +23,7 @@ namespace WzWeb.Server.Services
         public CharacterCollection GetCharacter(int id, string motionName);
         public IEnumerable<string> GetActions(int id);
         public Face GetFace(int faceId, string faceMotionName);
-        public IEnumerable<Face> GetFaces(ListRequest<Face> request);
+        public ListResponse<Face> GetFaces(ListRequest<Face> request);
 
     }
 }

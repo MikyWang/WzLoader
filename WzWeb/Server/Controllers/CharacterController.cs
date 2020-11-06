@@ -58,5 +58,10 @@ namespace WzWeb.Server.Controllers
         {
             return characterService.GetActions(id);
         }
+        [HttpPost("GetFaces")]
+        public ListResponse<Face> GetFaces(ListRequest<Face> req)
+        {
+            return characterService.GetFaces(req);
+        }
     }
 }

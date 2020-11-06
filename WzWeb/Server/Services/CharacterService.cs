@@ -30,6 +30,7 @@ namespace WzWeb.Server.Services
         {
             this.wzLoader = wzLoader;
             CharacterIDList = CharacterNode.Nodes.Select(node => FormatID(node.Text)).Where(id => id != 0);
+            FaceNode.Nodes.SortByImgID();
             FaceIDList = FaceNode.Nodes.Select(nd => FormatFaceId(nd.Text)).Where(id => id != 0);
         }
         public CharacterCollection GetCharacter(int id, string motionName)
@@ -63,13 +64,13 @@ namespace WzWeb.Server.Services
             if (node == null) return null;
             return node.Nodes.Where(node => (node.Text != "info")).Select(node => node.Text);
         }
-        public Face GetFace(int faceId, string faceMotionName)
+        public Face GetFace(int faceId, string faceMotionName = "blink")
         {
             if (!FaceIDList.Contains(faceId)) return null;
 
             var node = FaceNode.Nodes.First(nd => FormatFaceId(nd.Text) == faceId).GetImageNode();
             var motionNode = node.SearchNode(faceMotionName);
-            var faceString = FaceStringNode.SearchNode(faceId.ToString()).Nodes["name"].Value.ToString();
+            var faceString = FaceStringNode.SearchNode(faceId.ToString())?.Nodes["name"].Value.ToString();
             return new Face
             {
                 FaceId = faceId,
@@ -78,6 +79,19 @@ namespace WzWeb.Server.Services
                 FaceName = faceString
             };
 
+        }
+
+        public ListResponse<Face> GetFaces(ListRequest<Face> request)
+        {
+            var resp = new ListResponse<Face>
+            {
+                Results = FaceNode.Nodes.Skip(request.Start).Take(request.Num).Select(nd =>
+                {
+                    return GetFace(FormatFaceId(nd.Text));
+                }).ToList()
+            };
+            resp.HasNext = resp.Results.Count == request.Num;
+            return resp;
         }
 
         private int FormatID(string id)
