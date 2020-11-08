@@ -1,0 +1,44 @@
+﻿@inject INotifierService Notifier
+
+@if (Page == null)
+{
+    <Loading></Loading>
+}
+
+else
+{
+    @if (Page.Active)
+    {
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="@(CommonStrings.EMPTY_LINK)" @onclick="ChangePage">@Page.PageNum <span class="sr-only">(current)</span></a>
+        </li>
+    }
+    else
+    {
+        <li class="page-item"><a class="page-link" href="@(CommonStrings.EMPTY_LINK)" @onclick="ChangePage">@Page.PageNum</a></li>
+    }
+}
+
+
+
+
+@code {
+    [Parameter]
+    public PageItemModel Page { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void ChangePage()
+    {
+        BrowserService.CurrentFaceListPageNum = Page.PageNum;
+        Notifier.Update();
+    }
+}

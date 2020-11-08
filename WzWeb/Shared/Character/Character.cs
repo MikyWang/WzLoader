@@ -14,7 +14,7 @@ namespace WzWeb.Shared.Character
         public string CurrentFrame { get; set; }
         public string CurrentFaceFrame { get; set; }
         public EarType EarType { get; set; } = EarType.Normal;
-        public Point NeckPosition { get; set; } = new Point(50, 50);
+        public Point BodyPosition { get; set; } = new Point(70, 80);
 
 
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
@@ -42,10 +42,10 @@ namespace WzWeb.Shared.Character
             X = NeckPosition.X - Ear["neck"].X,
             Y = NeckPosition.Y - Ear["neck"].Y
         };
-        public Point BodyPosition => new Point
+        public Point NeckPosition => new Point
         {
-            X = NeckPosition.X - Body["neck"].X,
-            Y = NeckPosition.Y - Body["neck"].Y
+            X = BodyPosition.X + Body["neck"].X,
+            Y = BodyPosition.Y + Body["neck"].Y
         };
         public Point ArmPosition => new Point
         {

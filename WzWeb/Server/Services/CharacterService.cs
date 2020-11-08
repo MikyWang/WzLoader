@@ -17,18 +17,22 @@ namespace WzWeb.Server.Services
         public int DefaultFaceID => 20000;
         public string DefaultMotionName => "walk1";
         public string DefaultFaceMotionName => "blink";
-        public Wz_Node CharacterNode => wzLoader.CharacterNode;
-        public Wz_Node StringNode => wzLoader.StringNode;
-        public Wz_Node FaceNode => CharacterNode.SearchNode("Face");
-        public Wz_Node FaceStringNode => StringNode.SearchNode(@"Eqp.img\Eqp\Face");
+        public Wz_Node CharacterNode { get; private set; }
+        public Wz_Node StringNode { get; private set; }
+        public Wz_Node FaceNode { get; private set; }
+        public Wz_Node FaceStringNode { get; private set; }
         public IEnumerable<int> CharacterIDList { get; private set; }
         public IEnumerable<int> FaceIDList { get; private set; }
 
         private readonly IWzLoader wzLoader;
 
-        public CharacterService(IWzLoader wzLoader)
+        public CharacterService(IWzLoader _wzLoader)
         {
-            this.wzLoader = wzLoader;
+            wzLoader = _wzLoader;
+            CharacterNode = wzLoader.CharacterNode.Clone() as Wz_Node;
+            StringNode = wzLoader.StringNode.Clone() as Wz_Node;
+            FaceNode = CharacterNode.SearchNode("Face");
+            FaceStringNode = StringNode.SearchNode(@"Eqp.img\Eqp\Face");
             CharacterIDList = CharacterNode.Nodes.Select(node => FormatID(node.Text)).Where(id => id != 0);
             FaceNode.Nodes.SortByImgID();
             FaceIDList = FaceNode.Nodes.Select(nd => FormatFaceId(nd.Text)).Where(id => id != 0);

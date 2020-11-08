@@ -1,0 +1,76 @@
+﻿@inject INotifierService Notifier
+@implements IDisposable
+
+<nav aria-label="...">
+    <ul class="pagination pagination-lg justify-content-center">
+        <li class="page-item @PreviousDisabledClass">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @{
+            for (int i = middlePage - 1; i <= middlePage + 1; i++)
+            {
+                var cp = i;
+                if (cp == 0 || cp > PageCount) continue;
+                var item = new PageItemModel
+                {
+                    PageNum = cp,
+                    Active = cp == BrowserService.CurrentFaceListPageNum
+                };
+                <PageItem Page="@item"></PageItem>
+            }
+        }
+        <li class="page-item @NextDisabledClass">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@code {
+
+    [Parameter]
+    public int PageCount { get; set; }
+
+    private int middlePage;
+
+    #region 禁用标识
+    private bool PreviousDisabled => middlePage == 1;
+    private string PreviousDisabledClass => PreviousDisabled ? "disabled" : string.Empty;
+    private bool NextDisabled => middlePage == PageCount;
+    private string NextDisabledClass => NextDisabled ? "disabled" : string.Empty;
+    #endregion
+
+    protected override Task OnInitializedAsync()
+    {
+        Notifier.Notify += OnNotify;
+
+        CalculatePage();
+
+        return base.OnInitializedAsync();
+    }
+
+    private void CalculatePage()
+    {
+        middlePage = BrowserService.CurrentFaceListPageNum;
+        if (middlePage <= 1) middlePage++;
+        if (middlePage == PageCount) middlePage--;
+    }
+
+    private async Task OnNotify(string key, int value)
+    {
+        await InvokeAsync(() =>
+        {
+            CalculatePage();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Notifier.Notify -= OnNotify;
+    }
+
+}

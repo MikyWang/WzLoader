@@ -34,8 +34,8 @@ namespace WzWeb.Shared.Character
     {
         public string Name { get; set; }
         public Dictionary<string, CharacterAction> Actions { get; set; }
-
         public CharacterAction this[string key] => Actions.ContainsKey(key) ? Actions[key] : null;
+        public int FrameCount => Actions == null ? 0 : Actions.Count;
     }
 
     public class CharacterAction

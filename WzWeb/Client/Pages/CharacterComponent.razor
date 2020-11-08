@@ -1,14 +1,9 @@
 ﻿@page "/character"
-@using WzWeb.Shared
-@using Microsoft.AspNetCore.WebUtilities
-@using Newtonsoft.Json
-@using WzWeb.Client.Services
-@using WzWeb.Shared.Character
 @using Blazor.Extensions.Canvas.Canvas2D
 @using System.Drawing
 @using System.Threading
-@inject IBrowserService BrowserService
-
+@implements IDisposable
+@inject INotifierService Notifier
 
 @if (IsInit)
 {
@@ -137,8 +132,8 @@ else
                         <div class="p-2">
                             <FaceComponent CurrentFace="null"></FaceComponent>
                         </div>
-                        <div class="p-2">
-                            <div class="d-flex flex-column  mb-3  justify-content-center align-items-center">
+                        <div class="p-2 col-12">
+                            <div class="d-flex flex-column  mb-3  justify-content-around align-items-center">
                                 <div class="p-2">
                                     <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
                                 </div>
@@ -161,7 +156,7 @@ else
                                                 <button type="button" class="btn btn-primary" @onclick="PlayAnimation">播放帧动画</button>
                                             </div>
                                             <div class="p-2">
-                                                <button type="button" class="btn btn-primary" @onclick="StopAnimation">停止播放</button>
+                                                <button type="button" class="btn btn-danger" @onclick="StopAnimation">停止播放</button>
                                             </div>
                                         </div>
                                     }
@@ -211,7 +206,13 @@ else
     private string currentAction;
     private EarType currentEarType;
 
+    #region 计时器相关
+    private Timer anitimer;
+    private Timer faceAniTimer;
+    #endregion
+
     private int _currentFrame;
+    private int _currentFaceFrame;
 
     private int CurrentFrame
     {
@@ -223,25 +224,51 @@ else
         {
             if (value > Frames.Count - 1) value = 0;
             _currentFrame = value;
-            BrowserService.CurrentCharacter.CurrentFrame = CurrentFrame.ToString();
+            BrowserService.CurrentCharacter.CurrentFrame = _currentFrame.ToString();
             character = BrowserService.CurrentCharacter;
             StateHasChanged();
         }
     }
 
-    private Timer timer;
+    private int CurrentFaceFrame
+    {
+        get
+        {
+            return _currentFaceFrame;
+        }
+        set
+        {
+            if (value > character.CurrentFaceMotion.FrameCount - 1) value = 0;
+            _currentFaceFrame = value;
+            BrowserService.CurrentCharacter.CurrentFaceFrame = _currentFaceFrame.ToString();
+            character = BrowserService.CurrentCharacter;
+            StateHasChanged();
+        }
+    }
+
 
     private bool IsInit => character == null || Skins == null || Actions == null;
     private bool loading = true;
 
     protected async override Task OnInitializedAsync()
     {
-        timer = new Timer(new TimerCallback(Animate), null, Timeout.Infinite, 500);
+        Notifier.Notify += OnNotify;
+
+        anitimer = new Timer(new TimerCallback(Animate), null, Timeout.Infinite, 60);
         Skins = await BrowserService.GetSkins();
         character = await BrowserService.GetDefaultCharacter();
         currentSkin = character.Id;
         currentAction = character.CurrentHeadMotion.Name;
+        faceAniTimer = new Timer(new TimerCallback(FaceAnimate), null, 500, 360);
         await RefreshDataAsync();
+    }
+
+    private async Task OnNotify(string key, int value)
+    {
+        await InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
     }
 
     protected async Task RefreshDataAsync()
@@ -252,6 +279,7 @@ else
         character = await BrowserService.GetCharacterAsync(currentSkin, currentAction, 0);
         Frames = character.CurrentBodyMotion.Actions.Keys.Select(key => int.Parse(key)).ToList();
         CurrentFrame = 0;
+        CurrentFaceFrame = 0;
         character.EarType = currentEarType;
         loading = false;
     }
@@ -259,6 +287,7 @@ else
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (character == null) return;
+        character.CurrentFaceMotion = BrowserService.CurrentFace.FaceMotion;
         await BuildCanvas();
     }
 
@@ -338,14 +367,12 @@ else
     #region 动画相关
     private void PlayAnimation()
     {
-        timer.Change(0, 300);
+        anitimer.Change(0, 60);
     }
-
     private void StopAnimation()
     {
-        timer.Change(Timeout.Infinite, 300);
+        anitimer.Change(Timeout.Infinite, 60);
     }
-
     /// <summary>
     ///计时器回调
     /// </summary>
@@ -353,5 +380,18 @@ else
     {
         CurrentFrame++;
     }
+    private void FaceAnimate(object value)
+    {
+        if (character == null) return;
+
+        CurrentFaceFrame++;
+    }
     #endregion
+
+    public void Dispose()
+    {
+        anitimer.Change(Timeout.Infinite, 100);
+        faceAniTimer.Change(Timeout.Infinite, 100);
+        Notifier.Notify -= OnNotify;
+    }
 }

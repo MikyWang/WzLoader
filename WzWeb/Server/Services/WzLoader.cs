@@ -16,11 +16,12 @@ namespace WzWeb.Server.Services
         public Wz_Node BaseNode { get; private set; }
         public Wz_Node CharacterNode { get; private set; }
         public Wz_Node StringNode { get; private set; }
+        private Wz_Structure wz_Structure;
 
         public WzLoader(ILogger<WzLoader> logger)
         {
             this.logger = logger;
-            Wz_Structure wz_Structure = new Wz_Structure();
+            wz_Structure = new Wz_Structure();
             wz_Structure.Load(FILEPATH);
             BaseNode = wz_Structure.WzNode;
             CharacterNode = BaseNode.SearchNode("Character");
@@ -28,6 +29,9 @@ namespace WzWeb.Server.Services
             StringNode = BaseNode.SearchNode("String");
             this.logger.LogInformation($"已加载Wz,baseNode={BaseNode.Text},character={CharacterNode.Text},string={StringNode.Text}");
         }
-
+        public void Dispose()
+        {
+            wz_Structure.Clear();
+        }
     }
 }

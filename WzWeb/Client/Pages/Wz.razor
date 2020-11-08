@@ -1,12 +1,9 @@
 ﻿@page "/"
 @page "/wz"
-@using WzWeb.Shared
 @using Microsoft.AspNetCore.WebUtilities
-@using Newtonsoft.Json;
 @using WzWeb.Client.Services;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-@inject IBrowserService BrowserService
 
 @if (node == null)
 {

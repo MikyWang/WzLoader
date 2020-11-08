@@ -15,7 +15,11 @@ namespace WzWeb.Client.Services
         public IList<int> Skins { get; }
         public IList<string> Actions { get; }
         public List<Face> Faces { get; }
+        #region 状态相关
+        public Face CurrentFace { get; set; }
+        public int CurrentFaceListPageNum { get; set; }
         public Character CurrentCharacter { get; }
+        #endregion
         public Task Init();
         public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);
         public Task<Character> LoadingCharacterAsync(int id, string motionName, int frame);

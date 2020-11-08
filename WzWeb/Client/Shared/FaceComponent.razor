@@ -1,8 +1,6 @@
-﻿@using WzWeb.Client.Services;
-@using WzWeb.Shared
-@using WzWeb.Shared.Character
-@using System.Threading
-@inject IBrowserService BrowserService
+﻿@using System.Threading
+@inject INotifierService Notifier
+@implements IDisposable
 
 @if (searchFaces == null)
 {
@@ -12,16 +10,9 @@ else
 {
     <div class="card">
         <div class="card-header">
-            <form class="form row">
-                @if (hasNext)
-                {
-                    <input class="form-control" type="search" placeholder="正在加载..." aria-label="Search" readonly>
-                }
-                else
-                {
-                    <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@searchText @oninput="Search">
-                }
-
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜索脸型" value="@searchText" aria-label="Search" @oninput="Search" style="width:10rem">
+                <button class="btn btn-success my-2 my-sm-0" type="button" @onclick="SearchFromServer">全局搜索</button>
             </form>
         </div>
         <FixedHeightTemplate Percentage="50">
@@ -29,22 +20,13 @@ else
                 <div class="list-group list-group-flush">
                     @foreach (var face in searchFaces)
                     {
-                        var pngInfo = face.FaceMotion.Actions["0"]["face"].PngInfo;
-
-                        <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center" @onclick="ChooseFace">
-                            <div class="p-2">
-                                <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." width="@($"{pngInfo.Width}px")" height="@($"{pngInfo.Width}px")">
-                            </div>
-                            <div>
-                                <p class="card-title">@face.FaceId</p>
-                                <p class="card-text">@face.FaceName</p>
-                            </div>
-                        </div>
+                        <FaceItem CurrentFace="face"></FaceItem>
                     }
                 </div>
             </div>
         </FixedHeightTemplate>
     </div>
+    <PageComponent PageCount="pageCount"></PageComponent>
 }
 
 
@@ -57,16 +39,43 @@ else
     private bool hasNext = true;
     private string searchText;
 
+    private int pageCount;
+    private int currentPageIndex;
+    private int pageItemCount = 10;
+
     private Timer timer;
 
     private IList<Face> searchFaces;
 
     protected async override Task OnInitializedAsync()
     {
-        var response = await BrowserService.GetFaces(1);
-        searchFaces = BrowserService.Faces;
+        Notifier.Notify += OnNotify;
+
+        var response = await BrowserService.GetFaces(50);
         hasNext = response.HasNext;
-        timer = new Timer(new TimerCallback(state => GetFaces(state)), null, 0, 5000);
+        calculatePage();
+        //timer = new Timer(new TimerCallback(state => GetFaces(state)), null, 100, 5000);
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void calculatePage()
+    {
+        pageCount = BrowserService.Faces.Count / 10;
+        currentPageIndex = (BrowserService.CurrentFaceListPageNum - 1) * pageItemCount;
+        searchFaces = BrowserService.Faces.Skip(currentPageIndex).Take(pageItemCount).ToList();
+    }
+
+    private async Task OnNotify(string key, int value)
+    {
+        await InvokeAsync(() =>
+        {
+            calculatePage();
+            StateHasChanged();
+        });
     }
 
     private async Task GetFaces(object state)
@@ -90,6 +99,16 @@ else
     private void Search()
     {
 
+    }
+
+    private void SearchFromServer()
+    {
+
+    }
+    public void Dispose()
+    {
+        timer?.Change(Timeout.Infinite, 100);
+        Notifier.Notify -= OnNotify;
     }
 
 }

@@ -1,0 +1,35 @@
+﻿@inject INotifierService Notifier
+
+@if (pngInfo == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @ActiveClass" @onclick="ChooseFace">
+        <div class="p-2">
+            <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." width="@($"{pngInfo.Width}px")" height="@($"{pngInfo.Width}px")">
+        </div>
+        <div>
+            <p class="card-title">@CurrentFace.FaceId</p>
+            <p class="card-text">@CurrentFace.FaceName</p>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public Face CurrentFace { get; set; }
+
+    private string ActiveClass => CurrentFace.FaceId == BrowserService.CurrentFace.FaceId ? "active" : string.Empty;
+
+    private PngInfo pngInfo => CurrentFace.FaceMotion["0"]["face"].PngInfo;
+
+    private void ChooseFace()
+    {
+        BrowserService.CurrentFace = CurrentFace;
+        Notifier.Update();
+    }
+}
