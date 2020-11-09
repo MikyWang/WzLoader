@@ -1,33 +1,41 @@
 ﻿@inject INotifierService Notifier
 @implements IDisposable
 
-<nav aria-label="...">
-    <ul class="pagination pagination-lg justify-content-center">
-        <li class="page-item @PreviousDisabledClass">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        @{
-            for (int i = middlePage - 1; i <= middlePage + 1; i++)
-            {
-                var cp = i;
-                if (cp == 0 || cp > PageCount) continue;
-                var item = new PageItemModel
+@if (PageCount == 0)
+{
+    <Loading></Loading>
+}
+
+else
+{
+    <nav aria-label="...">
+        <ul class="pagination pagination-lg justify-content-center">
+            <li class="page-item @PreviousDisabledClass">
+                <a class="page-link" href="@(CommonStrings.EMPTY_LINK)" tabindex="-1" aria-disabled="true" aria-label="Previous" @onclick="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @{
+                for (int i = middlePage - 1; i <= middlePage + 1; i++)
                 {
-                    PageNum = cp,
-                    Active = cp == BrowserService.CurrentFaceListPageNum
-                };
-                <PageItem Page="@item"></PageItem>
+                    var cp = i;
+                    if (cp == 0 || cp > PageCount) continue;
+                    var item = new PageItemModel
+                    {
+                        PageNum = cp,
+                        Active = cp == BrowserService.CurrentFaceListPageNum
+                    };
+                    <PageItem Page="@item"></PageItem>
+                }
             }
-        }
-        <li class="page-item @NextDisabledClass">
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+            <li class="page-item @NextDisabledClass">
+                <a class="page-link" href="@(CommonStrings.EMPTY_LINK)" aria-label="Next" @onclick="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
 
 @code {
 
@@ -37,9 +45,9 @@
     private int middlePage;
 
     #region 禁用标识
-    private bool PreviousDisabled => middlePage == 1;
+    private bool PreviousDisabled => middlePage == 2;
     private string PreviousDisabledClass => PreviousDisabled ? "disabled" : string.Empty;
-    private bool NextDisabled => middlePage == PageCount;
+    private bool NextDisabled => middlePage == PageCount - 1;
     private string NextDisabledClass => NextDisabled ? "disabled" : string.Empty;
     #endregion
 
@@ -50,6 +58,14 @@
         CalculatePage();
 
         return base.OnInitializedAsync();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await InvokeAsync(() =>
+        {
+            CalculatePage();
+        });
     }
 
     private void CalculatePage()
@@ -66,6 +82,18 @@
             CalculatePage();
             StateHasChanged();
         });
+    }
+
+    private void Previous()
+    {
+        BrowserService.CurrentFaceListPageNum--;
+        Notifier.Update();
+    }
+
+    private void Next()
+    {
+        BrowserService.CurrentFaceListPageNum++;
+        Notifier.Update();
     }
 
     public void Dispose()

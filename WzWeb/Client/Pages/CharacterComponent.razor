@@ -367,11 +367,11 @@ else
     #region 动画相关
     private void PlayAnimation()
     {
-        anitimer.Change(0, 60);
+        anitimer.Change(0, character.Delay);
     }
     private void StopAnimation()
     {
-        anitimer.Change(Timeout.Infinite, 60);
+        anitimer.Change(Timeout.Infinite, character.Delay);
     }
     /// <summary>
     ///计时器回调

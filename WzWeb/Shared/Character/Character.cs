@@ -16,7 +16,6 @@ namespace WzWeb.Shared.Character
         public EarType EarType { get; set; } = EarType.Normal;
         public Point BodyPosition { get; set; } = new Point(70, 80);
 
-
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
         public int Delay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
 

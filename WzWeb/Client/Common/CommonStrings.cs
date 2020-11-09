@@ -21,5 +21,9 @@
         public static string CHARACTER_GET_ACTION_LIST => $"{CHARACTER}/GetActions";
         public static string CHARACTER_POST_FACES => $"{CHARACTER}/GetFaces";
         #endregion
+
+        #region BodyComponentControllerAPI
+        public static string BODY_POST_COMPONENT = @"api/BodyComponent/GetBodyComponent";
+        #endregion
     }
 }

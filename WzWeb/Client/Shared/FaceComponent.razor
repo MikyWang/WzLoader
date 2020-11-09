@@ -11,7 +11,7 @@ else
     <div class="card">
         <div class="card-header">
             <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜索脸型" value="@searchText" aria-label="Search" @oninput="Search" style="width:10rem">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜索脸型" value="@searchText" aria-label="Search" @oninput="Search" style="width:9.5rem">
                 <button class="btn btn-success my-2 my-sm-0" type="button" @onclick="SearchFromServer">全局搜索</button>
             </form>
         </div>
@@ -43,18 +43,15 @@ else
     private int currentPageIndex;
     private int pageItemCount = 10;
 
-    private Timer timer;
-
     private IList<Face> searchFaces;
 
     protected async override Task OnInitializedAsync()
     {
         Notifier.Notify += OnNotify;
 
-        var response = await BrowserService.GetFaces(50);
+        var response = await BrowserService.GetFaces(30);
         hasNext = response.HasNext;
-        calculatePage();
-        //timer = new Timer(new TimerCallback(state => GetFaces(state)), null, 100, 5000);
+        await calculatePage();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -62,33 +59,31 @@ else
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private void calculatePage()
+    private async Task calculatePage()
     {
-        pageCount = BrowserService.Faces.Count / 10;
+        pageCount = (int)MathF.Ceiling(BrowserService.Faces.Count / 10f);
         currentPageIndex = (BrowserService.CurrentFaceListPageNum - 1) * pageItemCount;
         searchFaces = BrowserService.Faces.Skip(currentPageIndex).Take(pageItemCount).ToList();
+        GetFaces();
     }
 
     private async Task OnNotify(string key, int value)
     {
-        await InvokeAsync(() =>
-        {
-            calculatePage();
-            StateHasChanged();
-        });
+        await InvokeAsync(async () =>
+      {
+          await calculatePage();
+          StateHasChanged();
+      });
     }
 
-    private async Task GetFaces(object state)
+    private async Task GetFaces()
     {
         if (!hasNext)
         {
-            timer.Change(Timeout.Infinite, 2000);
             return;
         }
-        var response = await BrowserService.GetFaces(200);
-        searchFaces = BrowserService.Faces;
+        var response = await BrowserService.GetFaces(10);
         hasNext = response.HasNext;
-        StateHasChanged();
     }
 
     private void ChooseFace()
@@ -107,7 +102,6 @@ else
     }
     public void Dispose()
     {
-        timer?.Change(Timeout.Infinite, 100);
         Notifier.Notify -= OnNotify;
     }
 

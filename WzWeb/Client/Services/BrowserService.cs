@@ -49,6 +49,14 @@ namespace WzWeb.Client.Services
             {
                 CurrentFace = await httpClient.GetFromJsonAsync<Face>(CommonStrings.CHARACTER_GET_DEFAULT_FACE);
             }
+
+            var component = new BodyComponent
+            {
+                ConfigType = ConfigType.Hair
+            };
+            var resp = await httpClient.PostAsJsonAsync<BodyComponent>(CommonStrings.BODY_POST_COMPONENT, component);
+
+
             if (CurrentCharacter == null)
             {
                 var response = await httpClient.GetFromJsonAsync<CharacterResponse>(CommonStrings.CHARACTER);

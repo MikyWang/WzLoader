@@ -76,7 +76,8 @@ namespace WzWeb.Shared.Character
     {
         Head,
         Body,
-        Face
+        Face,
+        Hair
     }
 
     public enum EarType
