@@ -7,7 +7,7 @@ namespace WzWeb.Shared.Character
         public abstract string BaseStringNodePath { get; }
         public abstract int DefaultID { get; }
         public abstract string DefaultMotionName { get; }
-
+        public abstract ConfigType ConfigType { get; }
         public abstract int FormatID(string text);
 
         public BodyComponent Component { get; set; }

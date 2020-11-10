@@ -259,7 +259,7 @@ else
         character = await BrowserService.GetDefaultCharacter();
         currentSkin = character.Id;
         currentAction = character.CurrentHeadMotion.Name;
-        faceAniTimer = new Timer(new TimerCallback(FaceAnimate), null, 500, 360);
+        faceAniTimer = new Timer(new TimerCallback(FaceAnimate), null, 100, character.FaceDelay);
         await RefreshDataAsync();
     }
 
@@ -367,11 +367,11 @@ else
     #region 动画相关
     private void PlayAnimation()
     {
-        anitimer.Change(0, character.Delay);
+        anitimer.Change(0, character.BodyDelay);
     }
     private void StopAnimation()
     {
-        anitimer.Change(Timeout.Infinite, character.Delay);
+        anitimer.Change(Timeout.Infinite, character.BodyDelay);
     }
     /// <summary>
     ///计时器回调
@@ -385,6 +385,11 @@ else
         if (character == null) return;
 
         CurrentFaceFrame++;
+        if (CurrentFaceFrame == character.CurrentFaceMotion.FrameCount - 1)
+        {
+            CurrentFaceFrame++;
+            faceAniTimer.Change(1500, character.FaceDelay);
+        }
     }
     #endregion
 

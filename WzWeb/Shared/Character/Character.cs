@@ -17,8 +17,8 @@ namespace WzWeb.Shared.Character
         public Point BodyPosition { get; set; } = new Point(70, 80);
 
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
-        public int Delay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
-
+        public int BodyDelay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
+        public int FaceDelay => int.Parse(CurrentBodyMotion[CurrentFaceFrame].Delay);
         public CharacterConfig Body => CurrentBodyMotion[CurrentFrame]["body"];
         public CharacterConfig Face => CurrentFaceMotion[CurrentFaceFrame]["face"];
         public CharacterConfig Arm => CurrentBodyMotion[CurrentFrame]["arm"];

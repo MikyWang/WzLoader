@@ -61,19 +61,22 @@ else
 
     private async Task calculatePage()
     {
-        pageCount = (int)MathF.Ceiling(BrowserService.Faces.Count / 10f);
-        currentPageIndex = (BrowserService.CurrentFaceListPageNum - 1) * pageItemCount;
-        searchFaces = BrowserService.Faces.Skip(currentPageIndex).Take(pageItemCount).ToList();
-        GetFaces();
+        await InvokeAsync(() =>
+        {
+            pageCount = (int)MathF.Ceiling(BrowserService.Faces.Count / 10f);
+            currentPageIndex = (BrowserService.CurrentFaceListPageNum - 1) * pageItemCount;
+            searchFaces = BrowserService.Faces.Skip(currentPageIndex).Take(pageItemCount).ToList();
+            _ = GetFaces();
+        });
     }
 
     private async Task OnNotify(string key, int value)
     {
         await InvokeAsync(async () =>
-      {
-          await calculatePage();
-          StateHasChanged();
-      });
+        {
+            await calculatePage();
+            StateHasChanged();
+        });
     }
 
     private async Task GetFaces()

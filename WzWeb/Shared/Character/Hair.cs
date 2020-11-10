@@ -8,6 +8,7 @@ namespace WzWeb.Shared.Character
         public override string BaseStringNodePath => @"String\Eqp.img\Eqp\Hair";
         public override int DefaultID => 30000;
         public override string DefaultMotionName => "walk1";
+        public override ConfigType ConfigType => ConfigType.Hair;
 
         public override int FormatID(string text)
         {

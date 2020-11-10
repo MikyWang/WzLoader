@@ -17,11 +17,16 @@ namespace WzWeb.Client.Services
         public bool HasInit { get; private set; }
         public Character CurrentCharacter { get; private set; }
         public Face CurrentFace { get; set; }
+        public BodyComponent CurrentHair { get; set; }
+
         public string NodePath { get; set; }
+
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; } = new Dictionary<int, IDictionary<string, CharacterCollection>>();
+
         public IList<int> Skins { get; private set; }
         public IList<string> Actions { get; private set; }
         public List<Face> Faces { get; set; }
+
         public int CurrentFaceListPageNum { get; set; } = 1;
 
         private readonly IJSRuntime jSRuntime;
@@ -49,13 +54,6 @@ namespace WzWeb.Client.Services
             {
                 CurrentFace = await httpClient.GetFromJsonAsync<Face>(CommonStrings.CHARACTER_GET_DEFAULT_FACE);
             }
-
-            var component = new BodyComponent
-            {
-                ConfigType = ConfigType.Hair
-            };
-            var resp = await httpClient.PostAsJsonAsync<BodyComponent>(CommonStrings.BODY_POST_COMPONENT, component);
-
 
             if (CurrentCharacter == null)
             {
