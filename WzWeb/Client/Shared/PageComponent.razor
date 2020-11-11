@@ -3,7 +3,7 @@
 
 @if (PageCount == 0)
 {
-    <Loading></Loading>
+    @*<Loading></Loading>*@
 }
 
 else
@@ -51,13 +51,15 @@ else
     private string NextDisabledClass => NextDisabled ? "disabled" : string.Empty;
     #endregion
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
         Notifier.Notify += OnNotify;
+        await InvokeAsync(() =>
+        {
+            CalculatePage();
+        });
 
-        CalculatePage();
 
-        return base.OnInitializedAsync();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

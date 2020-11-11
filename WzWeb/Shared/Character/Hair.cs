@@ -9,6 +9,7 @@ namespace WzWeb.Shared.Character
         public override int DefaultID => 30000;
         public override string DefaultMotionName => "walk1";
         public override ConfigType ConfigType => ConfigType.Hair;
+        public override PngInfo DefaultPngInfo => Component.Motion["0"]["hair"].PngInfo;
 
         public override int FormatID(string text)
         {

@@ -24,6 +24,7 @@
 
         #region BodyComponentControllerAPI
         public static string BODY_POST_COMPONENT = @"api/BodyComponent/GetBodyComponent";
+        public static string BODY_POST_COMPONENT_LIST = @"api/BodyComponent/GetBodyComponentList";
         #endregion
     }
 }

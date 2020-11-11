@@ -1,0 +1,78 @@
+﻿@typeparam TItem
+
+@inject INotifierService Notifier
+@implements IDisposable
+
+@if (CurrentItems == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜索脸型" value="@searchText" aria-label="Search" @oninput="()=>Search(searchText)" style="width:9.5rem">
+                <button class="btn btn-success my-2 my-sm-0" type="button" @onclick="()=>SearchFromServer(searchText)">全局搜索</button>
+            </form>
+        </div>
+        <FixedHeightTemplate Percentage="50">
+            <div class="card-body " style="padding:0rem">
+                <div class="list-group list-group-flush">
+                    @foreach (var item in CurrentItems)
+                    {
+                        @ItemTemplate(item.Value);
+                    }
+                </div>
+            </div>
+        </FixedHeightTemplate>
+    </div>
+    <PageComponent PageCount="PageCount"></PageComponent>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public IDictionary<int, TItem> CurrentItems { get; set; }
+    [Parameter]
+    public EventCallback<IDictionary<int, TItem>> CurrentItemsChanged { get; set; }
+    [Parameter]
+    public int PageCount { get; set; }
+    [Parameter]
+    public RenderFragment<TItem> ItemTemplate { get; set; }
+
+    [Parameter]
+    public Func<Task> CalculatePage { get; set; }
+    [Parameter]
+    public Func<Task> GetItems { get; set; }
+    [Parameter]
+    public Func<string, Task> Search { get; set; }
+    [Parameter]
+    public Func<string, Task> SearchFromServer { get; set; }
+
+    private string searchText;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Notifier.Notify += OnNotify;
+        await GetItems();
+        await CalculatePage();
+    }
+
+    private async Task OnNotify(string key, int value)
+    {
+        await InvokeAsync(async () =>
+        {
+            await CalculatePage();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Notifier.Notify -= OnNotify;
+    }
+
+}

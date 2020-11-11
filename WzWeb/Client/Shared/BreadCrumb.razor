@@ -16,7 +16,7 @@ else
                             ext += pathes[index];
                             <li class="breadcrumb-item">
                                 <HyperLink Link=@ext>
-                                        @pathes[index]
+                                    @pathes[index]
                                 </HyperLink>
                             </li>
 
@@ -38,13 +38,11 @@ else
     private List<string> pathes;
     private Dictionary<string, string> linkDic = new Dictionary<string, string>();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        await Task.Run(() =>
-        {
-            pathes = Path.Split('\\').ToList();
-            if (pathes[0] != "Base") pathes.Insert(0, "Base");
-        });
+        pathes = Path.Split('\\').ToList();
+        if (pathes[0] != "Base") pathes.Insert(0, "Base");
+        return base.OnInitializedAsync();
     }
 
 }

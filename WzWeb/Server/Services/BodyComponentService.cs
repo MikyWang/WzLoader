@@ -44,13 +44,19 @@ namespace WzWeb.Server.Services
         {
             var actComponent = BodyComponentBase.GetActuallyComponent(request.Parameter);
             var compNode = CharacterNode.SearchNode(actComponent.BaseNodePath);
+            compNode.Nodes.SortByImgID();
             var compStringNode = StringNode.SearchNode(actComponent.BaseStringNodePath);
+            compStringNode.Nodes.SortByImgID();
             var resp = new ListResponse<BodyComponent>
             {
                 Results = compNode.Nodes.Skip(request.Start).Take(request.Num).Select(nd =>
                 {
-                    var comp = request.Parameter;
-                    return GetBodyComponent(comp);
+                    var comp = new BodyComponent
+                    {
+                        ID = actComponent.FormatID(nd.Text),
+                        ConfigType = actComponent.ConfigType
+                    };
+                    return GetBodyComponent(comp, false);
                 }).ToList()
             };
             resp.HasNext = resp.Results.Count == request.Num;

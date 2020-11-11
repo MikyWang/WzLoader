@@ -8,6 +8,7 @@ using WzWeb.Shared;
 using WzWeb.Shared.Character;
 using System.Net.Http.Json;
 using System.Linq;
+using WzWeb.Client.Model;
 
 namespace WzWeb.Client.Services
 {
@@ -17,7 +18,6 @@ namespace WzWeb.Client.Services
         public bool HasInit { get; private set; }
         public Character CurrentCharacter { get; private set; }
         public Face CurrentFace { get; set; }
-        public BodyComponent CurrentHair { get; set; }
 
         public string NodePath { get; set; }
 
@@ -28,15 +28,27 @@ namespace WzWeb.Client.Services
         public List<Face> Faces { get; set; }
 
         public int CurrentFaceListPageNum { get; set; } = 1;
+        public BodyComponent CurrentHair => GetBodyComponentManager<Hair>().Current;
+
+
+        public IList<dynamic> ComponentManagers { get; set; }
 
         private readonly IJSRuntime jSRuntime;
         private readonly HttpClient httpClient;
+
+        //public BodyComponentManager<Hair> HairManager { get; private set; }
 
         public BrowserService(IJSRuntime jSRuntime, HttpClient httpClient)
         {
             this.jSRuntime = jSRuntime;
             this.httpClient = httpClient;
             _ = Init();
+
+            ComponentManagers = new List<dynamic>
+            {
+                new BodyComponentManager<Hair>(httpClient)
+            };
+
         }
         public async Task Init()
         {
@@ -55,6 +67,11 @@ namespace WzWeb.Client.Services
                 CurrentFace = await httpClient.GetFromJsonAsync<Face>(CommonStrings.CHARACTER_GET_DEFAULT_FACE);
             }
 
+            if (CurrentHair == null)
+            {
+                await GetBodyComponentManager<Hair>().GetDefaultComponent();
+            }
+
             if (CurrentCharacter == null)
             {
                 var response = await httpClient.GetFromJsonAsync<CharacterResponse>(CommonStrings.CHARACTER);
@@ -68,7 +85,8 @@ namespace WzWeb.Client.Services
                     CurrentFaceFrame = "0",
                     CurrentHeadMotion = collection.HeadMotion,
                     CurrentBodyMotion = collection.BodyMotion,
-                    CurrentFaceMotion = CurrentFace.FaceMotion
+                    CurrentFaceMotion = CurrentFace.FaceMotion,
+                    CurrentHairMotion = CurrentHair.Motion
                 };
             }
             return CurrentCharacter;
@@ -101,7 +119,8 @@ namespace WzWeb.Client.Services
                 CurrentFaceFrame = "0",
                 CurrentHeadMotion = extcollection.HeadMotion,
                 CurrentBodyMotion = extcollection.BodyMotion,
-                CurrentFaceMotion = CurrentFace.FaceMotion
+                CurrentFaceMotion = CurrentFace.FaceMotion,
+                CurrentHairMotion = CurrentHair.Motion
             };
         }
 
@@ -135,6 +154,20 @@ namespace WzWeb.Client.Services
 
             Actions = await httpClient.GetFromJsonAsync<List<string>>($"{CommonStrings.CHARACTER_GET_ACTION_LIST}/{characterId}");
             return Actions;
+        }
+
+        public BodyComponentManager<T> GetBodyComponentManager<T>() where T : BodyComponentBase, new()
+        {
+            foreach (var item in ComponentManagers)
+            {
+                var type = item.GetType();
+                var typeargs = type.GetGenericArguments();
+                foreach (var arg in typeargs)
+                {
+                    if (arg == typeof(T)) return item;
+                }
+            }
+            return null;
         }
     }
 }

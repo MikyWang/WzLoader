@@ -9,6 +9,7 @@ namespace WzWeb.Shared.Character
         public abstract string DefaultMotionName { get; }
         public abstract ConfigType ConfigType { get; }
         public abstract int FormatID(string text);
+        public abstract PngInfo DefaultPngInfo { get; }
 
         public BodyComponent Component { get; set; }
 

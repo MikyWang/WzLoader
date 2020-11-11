@@ -10,15 +10,19 @@ namespace WzWeb.Shared.Character
         public CharacterMotion CurrentHeadMotion { get; set; }
         public CharacterMotion CurrentBodyMotion { get; set; }
         public CharacterMotion CurrentFaceMotion { get; set; }
+        public CharacterMotion CurrentHairMotion { get; set; }
 
         public string CurrentFrame { get; set; }
         public string CurrentFaceFrame { get; set; }
         public EarType EarType { get; set; } = EarType.Normal;
-        public Point BodyPosition { get; set; } = new Point(70, 80);
+        public Point BodyPosition { get; set; } = new Point(70, 70);
 
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
         public int BodyDelay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
         public int FaceDelay => int.Parse(CurrentBodyMotion[CurrentFaceFrame].Delay);
+        public CharacterConfig Hair => CurrentHairMotion[CurrentFrame]["hair"];
+        public CharacterConfig HairOverHead => CurrentHairMotion[CurrentFrame]["hairOverHead"];
+        public CharacterConfig HairBelowBody => CurrentHairMotion[CurrentFrame]["hairBelowBody"];
         public CharacterConfig Body => CurrentBodyMotion[CurrentFrame]["body"];
         public CharacterConfig Face => CurrentFaceMotion[CurrentFaceFrame]["face"];
         public CharacterConfig Arm => CurrentBodyMotion[CurrentFrame]["arm"];
@@ -31,6 +35,11 @@ namespace WzWeb.Shared.Character
         public CharacterConfig RHand => CurrentBodyMotion[CurrentFrame]["rHand"];
         public CharacterConfig ArmOverHair => CurrentBodyMotion[CurrentFrame]["armOverHair"];
 
+        public Point NeckPosition => new Point
+        {
+            X = BodyPosition.X + Body["neck"].X,
+            Y = BodyPosition.Y + Body["neck"].Y
+        };
         public Point HeadPosition => new Point
         {
             X = NeckPosition.X - Head["neck"].X,
@@ -41,11 +50,7 @@ namespace WzWeb.Shared.Character
             X = NeckPosition.X - Ear["neck"].X,
             Y = NeckPosition.Y - Ear["neck"].Y
         };
-        public Point NeckPosition => new Point
-        {
-            X = BodyPosition.X + Body["neck"].X,
-            Y = BodyPosition.Y + Body["neck"].Y
-        };
+
         public Point ArmPosition => new Point
         {
             X = BodyPosition.X + Body["navel"].X - Arm["navel"].X,
@@ -60,6 +65,11 @@ namespace WzWeb.Shared.Character
         {
             X = HeadPosition.X + Head["brow"].X - Face["brow"].X,
             Y = HeadPosition.Y + Head["brow"].Y - Face["brow"].Y
+        };
+        public Point HairPosition => new Point
+        {
+            X = HeadPosition.X + Head["brow"].X - Hair["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - Hair["brow"].Y
         };
     }
 }

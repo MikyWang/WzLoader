@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace WzWeb.Client.Model
 {
-    public class BodyComponentManager<T> where T : BodyComponentBase, new()
+    public class BodyComponentManager<T> : IBodyComponentManager where T : BodyComponentBase, new()
     {
         private readonly HttpClient httpClient;
 
@@ -21,7 +21,7 @@ namespace WzWeb.Client.Model
         public bool HasNext { get; private set; } = true;
 
         public int PageCount => (int)MathF.Ceiling(Components.Count / PageItemCount);
-        public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
+        //public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
 
         private BodyComponentManager() { }
 
@@ -36,7 +36,7 @@ namespace WzWeb.Client.Model
 
             var componentBase = new T();
             var component = new BodyComponent { ConfigType = componentBase.ConfigType };
-            var resp = await httpClient.PostAsJsonAsync<BodyComponent>(CommonStrings.BODY_POST_COMPONENT, component);
+            var resp = await httpClient.PostAsJsonAsync(CommonStrings.BODY_POST_COMPONENT, component);
             Current = await resp.Content.ReadFromJsonAsync<BodyComponent>();
             return Current;
         }
@@ -54,7 +54,7 @@ namespace WzWeb.Client.Model
                 Parameter = component,
                 Start = Components.Count
             };
-            var response = await httpClient.PostAsJsonAsync<ListRequest<BodyComponent>>(CommonStrings.CHARACTER_POST_FACES, req);
+            var response = await httpClient.PostAsJsonAsync(CommonStrings.BODY_POST_COMPONENT_LIST, req);
             var components = await response.Content.ReadFromJsonAsync<ListResponse<BodyComponent>>();
             HasNext = components.HasNext;
             foreach (var item in components.Results)

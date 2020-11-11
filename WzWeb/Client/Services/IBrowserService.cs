@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WzWeb.Client.Model;
 using WzWeb.Shared;
 using WzWeb.Shared.Character;
 
@@ -19,6 +20,10 @@ namespace WzWeb.Client.Services
         public Face CurrentFace { get; set; }
         public int CurrentFaceListPageNum { get; set; }
         public Character CurrentCharacter { get; }
+
+        public BodyComponent CurrentHair { get; }
+
+        public IList<dynamic> ComponentManagers { get; set; }
         #endregion
         public Task Init();
         public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);
@@ -27,5 +32,6 @@ namespace WzWeb.Client.Services
         public Task<IList<int>> GetSkins();
         public Task<IList<string>> GetActions(int characterId);
         public Task<ListResponse<Face>> GetFaces(int number);
+        public BodyComponentManager<T> GetBodyComponentManager<T>() where T : BodyComponentBase, new();
     }
 }

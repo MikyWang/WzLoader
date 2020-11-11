@@ -1,5 +1,4 @@
-﻿@using System.Threading
-@inject INotifierService Notifier
+﻿@inject INotifierService Notifier
 @implements IDisposable
 
 @if (searchFaces == null)
@@ -33,9 +32,6 @@ else
 
 @code {
 
-    [Parameter]
-    public Face CurrentFace { get; set; }
-
     private bool hasNext = true;
     private string searchText;
 
@@ -52,11 +48,6 @@ else
         var response = await BrowserService.GetFaces(30);
         hasNext = response.HasNext;
         await calculatePage();
-    }
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        return base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task calculatePage()

@@ -37,6 +37,18 @@ else
         {
             <img src="data:image/png;base64,@(character.Hand.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Hand.PngInfo.Width + "px");height:@(character.Hand.PngInfo.Height + "px")" @ref="HandRef" />
         }
+        @if (character.Hair != null)
+        {
+            <img src="data:image/png;base64,@(character.Hair.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Hair.PngInfo.Width + "px");height:@(character.Hair.PngInfo.Height + "px")" @ref="HairRef" />
+        }
+        @if (character.HairOverHead != null)
+        {
+            <img src="data:image/png;base64,@(character.HairOverHead.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HairOverHead.PngInfo.Width + "px");height:@(character.HairOverHead.PngInfo.Height + "px")" @ref="HairOverHeadRef" />
+        }
+        @if (character.HairBelowBody != null)
+        {
+            <img src="data:image/png;base64,@(character.HairBelowBody.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HairBelowBody.PngInfo.Width + "px");height:@(character.HairBelowBody.PngInfo.Height + "px")" @ref="HairBelowBodyRef" />
+        }
 
     </div>
 
@@ -128,11 +140,11 @@ else
                     </div>
                 </div>
                 <div class="p-2">
-                    <div class="d-flex flex-row  mb-3  justify-content-around align-items-center">
+                    <div class="d-flex flex-row  mb-3  justify-content-center align-items-center">
                         <div class="p-2">
-                            <FaceComponent CurrentFace="null"></FaceComponent>
+                            @*<FaceComponent></FaceComponent>*@
                         </div>
-                        <div class="p-2 col-12">
+                        <div class="p-2">
                             <div class="d-flex flex-column  mb-3  justify-content-around align-items-center">
                                 <div class="p-2">
                                     <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
@@ -164,11 +176,7 @@ else
                             </div>
                         </div>
                         <div class="p-2">
-                            <div class="d-flex flex-column mb-3 justify-content-center">
-                                <div class="p-2 ">
-
-                                </div>
-                            </div>
+                            <BodyPartComponent Manager="HairManager"></BodyPartComponent>
                         </div>
                     </div>
                 </div>
@@ -180,6 +188,10 @@ else
 
 
 @code {
+
+    #region Managers
+    private IBodyComponentManager HairManager;
+    #endregion
 
     #region Canvas
     private Canvas2DContext context;
@@ -193,6 +205,9 @@ else
     private ElementReference FaceRef;
     private ElementReference HandRef;
     private ElementReference EarRef;
+    private ElementReference HairRef;
+    private ElementReference HairOverHeadRef;
+    private ElementReference HairBelowBodyRef;
     #endregion
 
     #region 后台数据
@@ -247,13 +262,13 @@ else
     }
 
 
-    private bool IsInit => character == null || Skins == null || Actions == null;
+    private bool IsInit => character == null || Skins == null || Actions == null || HairManager == null;
     private bool loading = true;
 
     protected async override Task OnInitializedAsync()
     {
         Notifier.Notify += OnNotify;
-
+        HairManager = BrowserService.GetBodyComponentManager<Hair>();
         anitimer = new Timer(new TimerCallback(Animate), null, Timeout.Infinite, 60);
         Skins = await BrowserService.GetSkins();
         character = await BrowserService.GetDefaultCharacter();
@@ -288,6 +303,7 @@ else
     {
         if (character == null) return;
         character.CurrentFaceMotion = BrowserService.CurrentFace.FaceMotion;
+        character.CurrentHairMotion = BrowserService.CurrentHair.Motion;
         await BuildCanvas();
     }
 
@@ -325,11 +341,19 @@ else
             await context.FillTextAsync("Loading...", 50, 50);
             return;
         }
+
         var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
         await context.DrawImageAsync(BodyRef, drwaPosition.X, drwaPosition.Y);
 
         drwaPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
         await context.DrawImageAsync(HeadRef, drwaPosition.X, drwaPosition.Y);
+
+        if (character.HairBelowBody != null)
+        {
+            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
+            await context.DrawImageAsync(HairBelowBodyRef, drwaPosition.X, drwaPosition.Y);
+        }
+
 
 
         if (character.EarType != EarType.Normal)
@@ -338,6 +362,21 @@ else
             await context.DrawImageAsync(EarRef, drwaPosition.X, drwaPosition.Y);
         }
 
+        if (character.HasFace)
+        {
+            drwaPosition = CalculateDrawPosition(character.FacePosition, character.Face);
+            await context.DrawImageAsync(FaceRef, drwaPosition.X, drwaPosition.Y);
+        }
+        if (character.Hair != null)
+        {
+            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
+            await context.DrawImageAsync(HairRef, drwaPosition.X, drwaPosition.Y);
+        }
+        if (character.HairOverHead != null)
+        {
+            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
+            await context.DrawImageAsync(HairOverHeadRef, drwaPosition.X, drwaPosition.Y);
+        }
         if (character.Arm != null)
         {
             drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
@@ -347,11 +386,6 @@ else
         {
             drwaPosition = CalculateDrawPosition(character.HandPosition, character.Hand);
             await context.DrawImageAsync(HandRef, drwaPosition.X, drwaPosition.Y);
-        }
-        if (character.HasFace)
-        {
-            drwaPosition = CalculateDrawPosition(character.FacePosition, character.Face);
-            await context.DrawImageAsync(FaceRef, drwaPosition.X, drwaPosition.Y);
         }
 
     }
@@ -378,18 +412,24 @@ else
     /// </summary>
     private void Animate(object value)
     {
-        CurrentFrame++;
+        InvokeAsync(() =>
+        {
+            CurrentFrame++;
+        });
     }
     private void FaceAnimate(object value)
     {
-        if (character == null) return;
-
-        CurrentFaceFrame++;
-        if (CurrentFaceFrame == character.CurrentFaceMotion.FrameCount - 1)
+        InvokeAsync(() =>
         {
+            if (character == null) return;
+
             CurrentFaceFrame++;
-            faceAniTimer.Change(1500, character.FaceDelay);
-        }
+            if (CurrentFaceFrame == character.CurrentFaceMotion.FrameCount - 1)
+            {
+                CurrentFaceFrame++;
+                faceAniTimer.Change(1500, character.FaceDelay);
+            }
+        });
     }
     #endregion
 

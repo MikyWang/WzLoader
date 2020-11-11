@@ -30,5 +30,11 @@ namespace WzWeb.Server.Controllers
             return bodyComponetService.GetBodyComponent(bodyComponent);
         }
 
+        [HttpPost("GetBodyComponentList")]
+        public ListResponse<BodyComponent> GetBodyComponentList(ListRequest<BodyComponent> request)
+        {
+            return bodyComponetService.GetBodyComponentList(request);
+        }
+
     }
 }

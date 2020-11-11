@@ -1,0 +1,44 @@
+﻿@inject INotifierService Notifier
+
+@if (HairList == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <SearchListWithPageTemplate CurrentItems="HairList" CalculatePage="CalculatePage">
+        <ItemTemplate Context="hair">
+            <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @(IsActive(hair))" @onclick="((e)=>{ ChooseHair(hair);})">
+                <div class="p-2">
+                    @{
+                        var pngInfo = BodyComponentBase.GetActuallyComponent(hair).DefaultPngInfo;
+                        <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." width="@($"{pngInfo.Width}px")" height="@($"{pngInfo.Width}px")">
+                    }
+                </div>
+                <div>
+                    <p class="card-title">@hair.ID</p>
+                    <p class="card-text">@hair.Name</p>
+                </div>
+            </div>
+        </ItemTemplate>
+    </SearchListWithPageTemplate>
+}
+
+@code {
+
+    private Dictionary<int, BodyComponent> HairList;
+
+    private Func<BodyComponent, string> IsActive => (BodyComponent hair) => hair.ID == BrowserService.CurrentHair?.ID ? "active" : string.Empty;
+
+    private void ChooseHair(BodyComponent hair)
+    {
+        BrowserService.GetBodyComponentManager<Hair>().Current = hair;
+        Notifier.Update();
+    }
+
+    private Task CalculatePage()
+    {
+        return null;
+    }
+
+}
