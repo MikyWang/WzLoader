@@ -23,7 +23,7 @@ namespace WzWeb.Client.Services
 
         public BodyComponent CurrentHair { get; }
 
-        public IList<dynamic> ComponentManagers { get; set; }
+        public IList<IBodyComponentManager> ComponentManagers { get; set; }
         #endregion
         public Task Init();
         public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);

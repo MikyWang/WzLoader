@@ -35,8 +35,9 @@ namespace WzWeb.Server.Services
             var node = compNode.Nodes.First(nd => actComponent.FormatID(nd.Text) == bodyComponent.ID).GetImageNode();
             var motionNode = node.SearchNode(actComponent.DefaultMotionName);
             var stringNode = compStringNode.SearchNode(bodyComponent.ID.ToString());
+            bodyComponent.Name = stringNode.Nodes["name"].Value.ToString();
             bodyComponent.Info = node.GetCharacterInfo();
-            bodyComponent.Motion = motionNode.GetCharacterMotion(CharacterNode, ConfigType.Face);
+            bodyComponent.Motion = motionNode.GetCharacterMotion(CharacterNode, ConfigType.Hair);
             return bodyComponent;
         }
 

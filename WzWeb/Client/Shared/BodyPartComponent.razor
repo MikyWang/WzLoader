@@ -6,7 +6,7 @@
 }
 else
 {
-    <SearchListWithPageTemplate @bind-CurrentItems="componentList" CalculatePage="CalculatePage" GetItems="GetItems" PageCount="Manager.PageCount" Search="Search" SearchFromServer="SearchFromServer">
+    <SearchListWithPageTemplate @bind-CurrentItems="componentList" @bind-CurrentPage="Manager.CurrentPage" CalculatePage="CalculatePage" GetItems="GetItems" PageCount="Manager.PageCount" Search="Search" SearchFromServer="SearchFromServer">
         <ItemTemplate Context="component">
             <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @(IsActive(component))" @onclick="((e)=>{ ChooseComponent(component);})">
                 <div class="p-2">
@@ -41,10 +41,11 @@ else
         componentList = await Manager.GetBodyComponentList(10);
     }
 
-    private void ChooseComponent(BodyComponent component)
+    private async Task ChooseComponent(BodyComponent component)
     {
         Manager.Current = component;
-        Notifier.Update();
+        StateHasChanged();
+        await Notifier.Update();
     }
 
     private async Task CalculatePage()

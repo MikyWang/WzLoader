@@ -1,5 +1,4 @@
 ﻿@inject INotifierService Notifier
-@implements IDisposable
 
 @if (PageCount == 0)
 {
@@ -23,9 +22,18 @@ else
                     var item = new PageItemModel
                     {
                         PageNum = cp,
-                        Active = cp == BrowserService.CurrentFaceListPageNum
+                        Active = cp == CurrentPage
                     };
-                    <PageItem Page="@item"></PageItem>
+                    if (item.Active)
+                    {
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="@(CommonStrings.EMPTY_LINK)" @onclick="()=> ChangePage(item.PageNum)">@item.PageNum <span class="sr-only">(current)</span></a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" href="@(CommonStrings.EMPTY_LINK)" @onclick="()=>ChangePage(item.PageNum)">@item.PageNum</a></li>
+                    }
                 }
             }
             <li class="page-item @NextDisabledClass">
@@ -42,6 +50,11 @@ else
     [Parameter]
     public int PageCount { get; set; }
 
+    [Parameter]
+    public int CurrentPage { get; set; }
+    [Parameter]
+    public EventCallback<int> CurrentPageChanged { get; set; }
+
     private int middlePage;
 
     #region 禁用标识
@@ -53,12 +66,10 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        Notifier.Notify += OnNotify;
         await InvokeAsync(() =>
         {
             CalculatePage();
         });
-
 
     }
 
@@ -72,35 +83,30 @@ else
 
     private void CalculatePage()
     {
-        middlePage = BrowserService.CurrentFaceListPageNum;
+        middlePage = CurrentPage;
         if (middlePage <= 1) middlePage++;
         if (middlePage == PageCount) middlePage--;
     }
 
-    private async Task OnNotify(string key, int value)
+    private async Task Previous()
     {
-        await InvokeAsync(() =>
-        {
-            CalculatePage();
-            StateHasChanged();
-        });
+        CurrentPage--;
+        await CurrentPageChanged.InvokeAsync(CurrentPage);
+        await Notifier.Update();
     }
 
-    private void Previous()
+    private async Task Next()
     {
-        BrowserService.CurrentFaceListPageNum--;
-        Notifier.Update();
+        CurrentPage++;
+        await CurrentPageChanged.InvokeAsync(CurrentPage);
+        await Notifier.Update();
     }
 
-    private void Next()
+    private async Task ChangePage(int page)
     {
-        BrowserService.CurrentFaceListPageNum++;
-        Notifier.Update();
-    }
-
-    public void Dispose()
-    {
-        Notifier.Notify -= OnNotify;
+        await CurrentPageChanged.InvokeAsync(page);
+        StateHasChanged();
+        await Notifier.Update();
     }
 
 }

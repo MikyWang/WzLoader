@@ -30,8 +30,7 @@ namespace WzWeb.Client.Services
         public int CurrentFaceListPageNum { get; set; } = 1;
         public BodyComponent CurrentHair => GetBodyComponentManager<Hair>().Current;
 
-
-        public IList<dynamic> ComponentManagers { get; set; }
+        public IList<IBodyComponentManager> ComponentManagers { get; set; }
 
         private readonly IJSRuntime jSRuntime;
         private readonly HttpClient httpClient;
@@ -44,9 +43,9 @@ namespace WzWeb.Client.Services
             this.httpClient = httpClient;
             _ = Init();
 
-            ComponentManagers = new List<dynamic>
+            ComponentManagers = new List<IBodyComponentManager>
             {
-                new BodyComponentManager<Hair>(httpClient)
+                new BodyComponentManager<Hair>(httpClient),
             };
 
         }
@@ -164,7 +163,7 @@ namespace WzWeb.Client.Services
                 var typeargs = type.GetGenericArguments();
                 foreach (var arg in typeargs)
                 {
-                    if (arg == typeof(T)) return item;
+                    if (arg == typeof(T)) return item as BodyComponentManager<T>;
                 }
             }
             return null;

@@ -12,7 +12,7 @@ else
     <div class="card">
         <div class="card-header">
             <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜索脸型" value="@searchText" aria-label="Search" @oninput="()=>Search(searchText)" style="width:9.5rem">
+                <input class="form-control mr-sm-2" type="search" placeholder="搜索..." value="@searchText" aria-label="Search" @oninput="()=>Search(searchText)" style="width:9.5rem">
                 <button class="btn btn-success my-2 my-sm-0" type="button" @onclick="()=>SearchFromServer(searchText)">全局搜索</button>
             </form>
         </div>
@@ -27,7 +27,7 @@ else
             </div>
         </FixedHeightTemplate>
     </div>
-    <PageComponent PageCount="PageCount"></PageComponent>
+    <PageComponent PageCount="PageCount" @bind-CurrentPage="currentPage"></PageComponent>
 }
 
 
@@ -51,6 +51,17 @@ else
     public Func<string, Task> Search { get; set; }
     [Parameter]
     public Func<string, Task> SearchFromServer { get; set; }
+
+    [Parameter]
+    public int CurrentPage { get; set; }
+    [Parameter]
+    public EventCallback<int> CurrentPageChanged { get; set; }
+
+    private int currentPage
+    {
+        get => CurrentPage;
+        set => CurrentPageChanged.InvokeAsync(value);
+    }
 
     private string searchText;
 

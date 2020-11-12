@@ -147,7 +147,7 @@ else
                         <div class="p-2">
                             <div class="d-flex flex-column  mb-3  justify-content-around align-items-center">
                                 <div class="p-2">
-                                    <BECanvas Width="100" Height="100" @ref="canvasReference"></BECanvas>
+                                    <BECanvas Width="150" Height="150" @ref="canvasReference"></BECanvas>
                                 </div>
                                 <div class="p-2">
                                     @if (loading)
@@ -280,8 +280,9 @@ else
 
     private async Task OnNotify(string key, int value)
     {
-        await InvokeAsync(() =>
+        await InvokeAsync(async () =>
         {
+            await RefreshDataAsync();
             StateHasChanged();
         });
     }
@@ -296,6 +297,8 @@ else
         CurrentFrame = 0;
         CurrentFaceFrame = 0;
         character.EarType = currentEarType;
+        character.CurrentHairMotion = BrowserService.CurrentHair.Motion;
+        PlayAnimation();
         loading = false;
     }
 
@@ -303,7 +306,6 @@ else
     {
         if (character == null) return;
         character.CurrentFaceMotion = BrowserService.CurrentFace.FaceMotion;
-        character.CurrentHairMotion = BrowserService.CurrentHair.Motion;
         await BuildCanvas();
     }
 
@@ -334,58 +336,57 @@ else
             await context.SetTextBaselineAsync(TextBaseline.Middle);
         }
 
-        await context.ClearRectAsync(0, 0, 100, 100);
+        await context.ClearRectAsync(0, 0, 150, 150);
 
         if (loading)
         {
-            await context.FillTextAsync("Loading...", 50, 50);
+            await context.FillTextAsync("Loading...", 75, 75);
             return;
         }
 
-        var drwaPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
-        await context.DrawImageAsync(BodyRef, drwaPosition.X, drwaPosition.Y);
-
-        drwaPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
-        await context.DrawImageAsync(HeadRef, drwaPosition.X, drwaPosition.Y);
+        Point drawPosition;
 
         if (character.HairBelowBody != null)
         {
-            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
-            await context.DrawImageAsync(HairBelowBodyRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.HairBelowBodyPosition, character.HairBelowBody);
+            await context.DrawImageAsync(HairBelowBodyRef, drawPosition.X, drawPosition.Y);
         }
 
+        drawPosition = CalculateDrawPosition(character.BodyPosition, character.Body);
+        await context.DrawImageAsync(BodyRef, drawPosition.X, drawPosition.Y);
 
+        drawPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
+        await context.DrawImageAsync(HeadRef, drawPosition.X, drawPosition.Y);
 
         if (character.EarType != EarType.Normal)
         {
-            drwaPosition = CalculateDrawPosition(character.EarPosition, character.Ear);
-            await context.DrawImageAsync(EarRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.EarPosition, character.Ear);
+            await context.DrawImageAsync(EarRef, drawPosition.X, drawPosition.Y);
         }
-
         if (character.HasFace)
         {
-            drwaPosition = CalculateDrawPosition(character.FacePosition, character.Face);
-            await context.DrawImageAsync(FaceRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.FacePosition, character.Face);
+            await context.DrawImageAsync(FaceRef, drawPosition.X, drawPosition.Y);
         }
         if (character.Hair != null)
         {
-            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
-            await context.DrawImageAsync(HairRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
+            await context.DrawImageAsync(HairRef, drawPosition.X, drawPosition.Y);
         }
         if (character.HairOverHead != null)
         {
-            drwaPosition = CalculateDrawPosition(character.HairPosition, character.Hair);
-            await context.DrawImageAsync(HairOverHeadRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.HairOverHeadPosition, character.HairOverHead);
+            await context.DrawImageAsync(HairOverHeadRef, drawPosition.X, drawPosition.Y);
         }
         if (character.Arm != null)
         {
-            drwaPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
-            await context.DrawImageAsync(ArmRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.ArmPosition, character.Arm);
+            await context.DrawImageAsync(ArmRef, drawPosition.X, drawPosition.Y);
         }
         if (character.Hand != null)
         {
-            drwaPosition = CalculateDrawPosition(character.HandPosition, character.Hand);
-            await context.DrawImageAsync(HandRef, drwaPosition.X, drwaPosition.Y);
+            drawPosition = CalculateDrawPosition(character.HandPosition, character.Hand);
+            await context.DrawImageAsync(HandRef, drawPosition.X, drawPosition.Y);
         }
 
     }

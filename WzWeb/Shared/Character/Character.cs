@@ -15,7 +15,7 @@ namespace WzWeb.Shared.Character
         public string CurrentFrame { get; set; }
         public string CurrentFaceFrame { get; set; }
         public EarType EarType { get; set; } = EarType.Normal;
-        public Point BodyPosition { get; set; } = new Point(70, 70);
+        public Point BodyPosition { get; set; } = new Point(75, 100);
 
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
         public int BodyDelay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
@@ -70,6 +70,16 @@ namespace WzWeb.Shared.Character
         {
             X = HeadPosition.X + Head["brow"].X - Hair["brow"].X,
             Y = HeadPosition.Y + Head["brow"].Y - Hair["brow"].Y
+        };
+        public Point HairOverHeadPosition => new Point
+        {
+            X = HeadPosition.X + Head["brow"].X - HairOverHead["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - HairOverHead["brow"].Y
+        };
+        public Point HairBelowBodyPosition => new Point
+        {
+            X = HeadPosition.X + Head["brow"].X - HairBelowBody["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - HairBelowBody["brow"].Y
         };
     }
 }
