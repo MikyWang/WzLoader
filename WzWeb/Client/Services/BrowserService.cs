@@ -17,7 +17,6 @@ namespace WzWeb.Client.Services
         public BrowserConfig Config { get; private set; }
         public bool HasInit { get; private set; }
         public Character CurrentCharacter { get; private set; }
-        public Face CurrentFace { get; set; }
 
         public string NodePath { get; set; }
 
@@ -25,10 +24,11 @@ namespace WzWeb.Client.Services
 
         public IList<int> Skins { get; private set; }
         public IList<string> Actions { get; private set; }
-        public List<Face> Faces { get; set; }
 
-        public int CurrentFaceListPageNum { get; set; } = 1;
         public BodyComponent CurrentHair => GetBodyComponentManager<Hair>().Current;
+        public BodyComponent CurrentFace => GetBodyComponentManager<Face>().Current;
+        public BodyComponent CurrentCoat => GetBodyComponentManager<Coat>().Current;
+        public BodyComponent CurrentPants => GetBodyComponentManager<Pants>().Current;
 
         public IList<IBodyComponentManager> ComponentManagers { get; set; }
 
@@ -46,6 +46,9 @@ namespace WzWeb.Client.Services
             ComponentManagers = new List<IBodyComponentManager>
             {
                 new BodyComponentManager<Hair>(httpClient),
+                new BodyComponentManager<Face>(httpClient),
+                new BodyComponentManager<Coat>(httpClient),
+                new BodyComponentManager<Pants>(httpClient)
             };
 
         }
@@ -63,12 +66,20 @@ namespace WzWeb.Client.Services
         {
             if (CurrentFace == null)
             {
-                CurrentFace = await httpClient.GetFromJsonAsync<Face>(CommonStrings.CHARACTER_GET_DEFAULT_FACE);
+                await GetBodyComponentManager<Face>().GetDefaultComponent();
             }
 
             if (CurrentHair == null)
             {
                 await GetBodyComponentManager<Hair>().GetDefaultComponent();
+            }
+            if (CurrentCoat == null)
+            {
+                await GetBodyComponentManager<Coat>().GetDefaultComponent();
+            }
+            if (CurrentPants == null)
+            {
+                await GetBodyComponentManager<Pants>().GetDefaultComponent();
             }
 
             if (CurrentCharacter == null)
@@ -84,8 +95,10 @@ namespace WzWeb.Client.Services
                     CurrentFaceFrame = "0",
                     CurrentHeadMotion = collection.HeadMotion,
                     CurrentBodyMotion = collection.BodyMotion,
-                    CurrentFaceMotion = CurrentFace.FaceMotion,
-                    CurrentHairMotion = CurrentHair.Motion
+                    CurrentFaceMotion = CurrentFace.Motion,
+                    CurrentHairMotion = CurrentHair.Motion,
+                    CurrentCoatMotion = CurrentCoat.Motion,
+                    CurrentPantsMotion = CurrentPants.Motion
                 };
             }
             return CurrentCharacter;
@@ -118,27 +131,13 @@ namespace WzWeb.Client.Services
                 CurrentFaceFrame = "0",
                 CurrentHeadMotion = extcollection.HeadMotion,
                 CurrentBodyMotion = extcollection.BodyMotion,
-                CurrentFaceMotion = CurrentFace.FaceMotion,
-                CurrentHairMotion = CurrentHair.Motion
+                CurrentFaceMotion = CurrentFace.Motion,
+                CurrentHairMotion = CurrentHair.Motion,
+                CurrentCoatMotion = CurrentCoat.Motion,
+                CurrentPantsMotion = CurrentPants.Motion
             };
         }
 
-        public async Task<ListResponse<Face>> GetFaces(int number)
-        {
-            if (Faces == null) Faces = new List<Face>();
-
-            var request = new ListRequest<Face>
-            {
-                Num = number,
-                Parameter = null,
-                Start = Faces.Count
-            };
-
-            var response = await httpClient.PostAsJsonAsync<ListRequest<Face>>(CommonStrings.CHARACTER_POST_FACES, request);
-            var faces = await response.Content.ReadFromJsonAsync<ListResponse<Face>>();
-            Faces.AddRange(faces.Results);
-            return faces;
-        }
 
         public async Task<IList<int>> GetSkins()
         {

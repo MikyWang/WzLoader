@@ -15,14 +15,11 @@ namespace WzWeb.Client.Services
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; }
         public IList<int> Skins { get; }
         public IList<string> Actions { get; }
-        public List<Face> Faces { get; }
         #region 状态相关
-        public Face CurrentFace { get; set; }
-        public int CurrentFaceListPageNum { get; set; }
         public Character CurrentCharacter { get; }
-
         public BodyComponent CurrentHair { get; }
-
+        public BodyComponent CurrentFace { get; }
+        public BodyComponent CurrentCoat { get; }
         public IList<IBodyComponentManager> ComponentManagers { get; set; }
         #endregion
         public Task Init();
@@ -31,7 +28,6 @@ namespace WzWeb.Client.Services
         public Task<Character> GetDefaultCharacter();
         public Task<IList<int>> GetSkins();
         public Task<IList<string>> GetActions(int characterId);
-        public Task<ListResponse<Face>> GetFaces(int number);
         public BodyComponentManager<T> GetBodyComponentManager<T>() where T : BodyComponentBase, new();
     }
 }

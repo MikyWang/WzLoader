@@ -23,6 +23,7 @@ namespace WzWeb.Server.Services
             this.logger = logger;
             wz_Structure = new Wz_Structure();
             wz_Structure.Load(FILEPATH);
+
             BaseNode = wz_Structure.WzNode;
             CharacterNode = BaseNode.SearchNode("Character");
             CharacterNode.Nodes.SortByImgID();

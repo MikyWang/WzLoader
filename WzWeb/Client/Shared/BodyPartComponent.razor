@@ -8,7 +8,7 @@ else
 {
     <SearchListWithPageTemplate @bind-CurrentItems="componentList" @bind-CurrentPage="Manager.CurrentPage" CalculatePage="CalculatePage" GetItems="GetItems" PageCount="Manager.PageCount" Search="Search" SearchFromServer="SearchFromServer">
         <ItemTemplate Context="component">
-            <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @(IsActive(component))" @onclick="((e)=>{ ChooseComponent(component);})">
+            <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @(IsActive(component))" @onclick="(async(e)=>{await ChooseComponent(component);})">
                 <div class="p-2">
                     @{
                             var pngInfo = BodyComponentBase.GetActuallyComponent(component).DefaultPngInfo;
@@ -16,7 +16,7 @@ else
                     }
                 </div>
                 <div>
-                    <p class="card-title">@component.ID</p>
+                    <h5 class="card-title">@component.ID</h5>
                     <p class="card-text">@component.Name</p>
                 </div>
             </div>
@@ -31,14 +31,14 @@ else
 
     private IDictionary<int, BodyComponent> componentList;
 
-    private Func<BodyComponent, string> IsActive => (BodyComponent hair) => hair.ID == Manager.Current?.ID ? "active" : string.Empty;
+    private Func<BodyComponent, string> IsActive => (BodyComponent comp) => comp.ID == Manager.Current?.ID ? "active" : string.Empty;
     private int CurrentPage => Manager.CurrentPage;
     private int PageItemCount => Manager.PageItemCount;
     private int CurrentPageIndex => (CurrentPage - 1) * PageItemCount;
 
     protected async override Task OnInitializedAsync()
     {
-        componentList = await Manager.GetBodyComponentList(10);
+        componentList = await Manager.GetBodyComponentList(30);
     }
 
     private async Task ChooseComponent(BodyComponent component)
@@ -53,6 +53,7 @@ else
         await InvokeAsync(() =>
         {
             componentList = Manager.Components.Skip(CurrentPageIndex).Take(PageItemCount).ToDictionary(item => item.Key, item => item.Value);
+            if (Manager.PageEnoughed) return;
             _ = GetItems();
         });
     }

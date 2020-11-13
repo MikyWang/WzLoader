@@ -14,13 +14,9 @@ namespace WzWeb.Server.Services
     public class CharacterService : ICharacterService
     {
         public int DefaultID => 2000;
-        public int DefaultFaceID => 20000;
         public string DefaultMotionName => "walk1";
-        public string DefaultFaceMotionName => "blink";
         public Wz_Node CharacterNode { get; private set; }
         public Wz_Node StringNode { get; private set; }
-        public Wz_Node FaceNode { get; private set; }
-        public Wz_Node FaceStringNode { get; private set; }
         public IEnumerable<int> CharacterIDList { get; private set; }
         public IEnumerable<int> FaceIDList { get; private set; }
 
@@ -29,13 +25,9 @@ namespace WzWeb.Server.Services
         public CharacterService(IWzLoader _wzLoader)
         {
             wzLoader = _wzLoader;
-            CharacterNode = wzLoader.CharacterNode.Clone() as Wz_Node;
-            StringNode = wzLoader.StringNode.Clone() as Wz_Node;
-            FaceNode = CharacterNode.SearchNode("Face");
-            FaceStringNode = StringNode.SearchNode(@"Eqp.img\Eqp\Face");
+            CharacterNode = wzLoader.CharacterNode;
+            StringNode = wzLoader.StringNode;
             CharacterIDList = CharacterNode.Nodes.Select(node => FormatID(node.Text)).Where(id => id != 0);
-            FaceNode.Nodes.SortByImgID();
-            FaceIDList = FaceNode.Nodes.Select(nd => FormatFaceId(nd.Text)).Where(id => id != 0);
         }
         public CharacterCollection GetCharacter(int id, string motionName)
         {
@@ -52,9 +44,9 @@ namespace WzWeb.Server.Services
             CharacterCollection character = new CharacterCollection
             {
                 Id = id,
-                HeadInfo = headNode.GetCharacterInfo(),
+                HeadInfo = headNode.GetCharacterInfo(CharacterNode),
                 HeadMotion = headNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode, ConfigType.Head),
-                BodyInfo = bodyNode.GetCharacterInfo(),
+                BodyInfo = bodyNode.GetCharacterInfo(CharacterNode),
                 BodyMotion = bodyNode.Nodes[motionName]?.GetCharacterMotion(CharacterNode, ConfigType.Body),
             };
 
@@ -68,63 +60,12 @@ namespace WzWeb.Server.Services
             if (node == null) return null;
             return node.Nodes.Where(node => (node.Text != "info")).Select(node => node.Text);
         }
-        public Face GetFace(int faceId, string faceMotionName = "blink")
-        {
-            if (!FaceIDList.Contains(faceId)) return null;
-
-            var node = FaceNode.Nodes.First(nd => FormatFaceId(nd.Text) == faceId).GetImageNode();
-            var motionNode = node.SearchNode(faceMotionName);
-            var faceStringNode = FaceStringNode.SearchNode(faceId.ToString());
-
-            //ToDo:需修复脸型不正确数据
-            string faceString;
-            if (faceStringNode == null)
-            {
-                faceString = null;
-            }
-            else if (faceStringNode.Nodes["name"] == null)
-            {
-                faceString = $"{faceStringNode.Text}:{faceStringNode.Value}";
-            }
-            else
-            {
-                faceString = faceStringNode.Nodes["name"].Value.ToString();
-            }
-
-            return new Face
-            {
-                FaceId = faceId,
-                FaceInfo = node.GetCharacterInfo(),
-                FaceMotion = motionNode.GetCharacterMotion(CharacterNode, ConfigType.Face),
-                FaceName = faceString
-            };
-
-        }
-
-        public ListResponse<Face> GetFaces(ListRequest<Face> request)
-        {
-            var resp = new ListResponse<Face>
-            {
-                Results = FaceNode.Nodes.Skip(request.Start).Take(request.Num).Select(nd =>
-                {
-                    return GetFace(FormatFaceId(nd.Text));
-                }).ToList()
-            };
-            resp.HasNext = resp.Results.Count == request.Num;
-            return resp;
-        }
 
         private int FormatID(string id)
         {
             var regex = new Regex(@"(?<=000(0|1))[\d]+(?=(\.)img)");
             var match = regex.Match(id);
 
-            return match.Success ? int.Parse(match.Value) : 0;
-        }
-        private int FormatFaceId(string faceId)
-        {
-            var regex = new Regex(@"(?<=000)[\d]+(?=(\.)img)");
-            var match = regex.Match(faceId);
             return match.Success ? int.Parse(match.Value) : 0;
         }
     }

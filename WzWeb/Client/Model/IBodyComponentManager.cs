@@ -21,6 +21,7 @@ namespace WzWeb.Client.Model
         public Task<IDictionary<int, BodyComponent>> GetBodyComponentList(int number);
 
         public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
+        public bool PageEnoughed => (CurrentPage + 1) * PageItemCount < Components.Count;
 
     }
 

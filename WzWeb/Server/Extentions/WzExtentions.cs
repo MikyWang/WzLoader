@@ -137,7 +137,7 @@ namespace WzWeb.Server.Extentions
             return SearchNode(node, pathes);
         }
 
-        public static CharacterInfo GetCharacterInfo(this Wz_Node wz_Node)
+        public static CharacterInfo GetCharacterInfo(this Wz_Node wz_Node, Wz_Node baseNode)
         {
             var infoNode = wz_Node.Nodes["info"];
             if (infoNode == null) return null;
@@ -146,7 +146,18 @@ namespace WzWeb.Server.Extentions
             {
                 Islot = infoNode.Nodes["islot"]?.Value.ToString(),
                 Vslot = infoNode.Nodes["vslot"]?.Value.ToString(),
-                Cash = infoNode.Nodes["cash"]?.Value.ToString()
+                Cash = infoNode.Nodes["cash"]?.Value.ToString(),
+                Icon = infoNode.Nodes["icon"]?.GetPngInfo(baseNode),
+                IconRaw = infoNode.Nodes["iconRaw"]?.GetPngInfo(baseNode),
+                IncPDD = infoNode.Nodes["incPDD"]?.Value?.ToString(),
+                Price = infoNode.Nodes["price"]?.Value?.ToString(),
+                ReqDEX = infoNode.Nodes["reqDEX"]?.Value?.ToString(),
+                ReqINT = infoNode.Nodes["reqINT"]?.Value?.ToString(),
+                ReqJob = infoNode.Nodes["reqJob"]?.Value?.ToString(),
+                ReqLevel = infoNode.Nodes["reqLevel"]?.Value?.ToString(),
+                ReqLUK = infoNode.Nodes["reqLUK"]?.Value?.ToString(),
+                ReqSTR = infoNode.Nodes["reqSTR"]?.Value?.ToString(),
+                Tuc = infoNode.Nodes["tuc"]?.Value?.ToString()
             };
         }
 
@@ -160,13 +171,13 @@ namespace WzWeb.Server.Extentions
             {
                 var link = inLinkNode.Value.ToString().Replace('/', '\\');
                 var node = wz_Node.GetNodeWzImage().Node.SearchNode(link);
-                pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
+                pngInfo = node.GetValue<Wz_Png>()?.ToPngInfo();
             }
             else if (outLinkNode != null)
             {
                 var link = outLinkNode.Value.ToString().Replace('/', '\\');
                 var node = baseNode.SearchNode(link);
-                pngInfo = node.GetValue<Wz_Png>().ToPngInfo();
+                pngInfo = node.GetValue<Wz_Png>()?.ToPngInfo();
             }
             else
             {
@@ -191,13 +202,11 @@ namespace WzWeb.Server.Extentions
             Func<Wz_Node, bool> filter;
             switch (type)
             {
-                case ConfigType.Head:
-                case ConfigType.Body:
-                    filter = node => node.Text != "face" || node.Text != "delay";
-                    break;
                 case ConfigType.Face:
                     filter = node => node.Text != "delay";
                     break;
+                case ConfigType.Head:
+                case ConfigType.Body:
                 default:
                     filter = node => node.Text != "face" || node.Text != "delay";
                     break;
@@ -241,6 +250,7 @@ namespace WzWeb.Server.Extentions
                 Rotate = nodes["rotate"]?.Value?.ToString(),
                 Vector = nodes["vector"]?.GetValue<Wz_Vector>(),
                 Flip = nodes["flip"]?.Value?.ToString()
+
             };
             if (config.Action != null)
             {

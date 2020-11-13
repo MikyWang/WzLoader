@@ -19,9 +19,10 @@ namespace WzWeb.Client.Model
         public int CurrentPage { get; set; } = 1;
         public int PageItemCount { get; set; } = 10;
         public bool HasNext { get; private set; } = true;
+        public bool PageEnoughed => (CurrentPage + 1) * PageItemCount < Components.Count;
 
         public int PageCount => (int)MathF.Ceiling(Components.Count / PageItemCount);
-        //public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
+        public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
 
         private BodyComponentManager() { }
 

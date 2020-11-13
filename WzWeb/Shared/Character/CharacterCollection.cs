@@ -28,6 +28,19 @@ namespace WzWeb.Shared.Character
         public string Islot { get; set; }
         public string Vslot { get; set; }
         public string Cash { get; set; }
+        #region Coat
+        public PngInfo Icon { get; set; }
+        public PngInfo IconRaw { get; set; }
+        public string ReqJob { get; set; }
+        public string ReqLevel { get; set; }
+        public string ReqSTR { get; set; }
+        public string ReqDEX { get; set; }
+        public string ReqINT { get; set; }
+        public string ReqLUK { get; set; }
+        public string IncPDD { get; set; } //增加物理防御力
+        public string Tuc { get; set; }
+        public string Price { get; set; }
+        #endregion
     }
 
     public class CharacterMotion
@@ -69,6 +82,8 @@ namespace WzWeb.Shared.Character
         public Point Vector { get; set; }
         public string Flip { get; set; }
 
+
+
         public Point this[string key] => Map.ContainsKey(key) ? Map[key] : new Point();
     }
 
@@ -77,7 +92,9 @@ namespace WzWeb.Shared.Character
         Head,
         Body,
         Face,
-        Hair
+        Hair,
+        Coat,
+        Pants
     }
 
     public enum EarType

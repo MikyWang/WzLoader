@@ -11,6 +11,8 @@ namespace WzWeb.Shared.Character
         public CharacterMotion CurrentBodyMotion { get; set; }
         public CharacterMotion CurrentFaceMotion { get; set; }
         public CharacterMotion CurrentHairMotion { get; set; }
+        public CharacterMotion CurrentCoatMotion { get; set; }
+        public CharacterMotion CurrentPantsMotion { get; set; }
 
         public string CurrentFrame { get; set; }
         public string CurrentFaceFrame { get; set; }
@@ -20,20 +22,31 @@ namespace WzWeb.Shared.Character
         public bool HasFace => CurrentBodyMotion[CurrentFrame].HasFace == "1";
         public int BodyDelay => int.Parse(CurrentBodyMotion[CurrentFrame].Delay);
         public int FaceDelay => int.Parse(CurrentBodyMotion[CurrentFaceFrame].Delay);
+        #region Hair
         public CharacterConfig Hair => CurrentHairMotion[CurrentFrame]["hair"];
         public CharacterConfig HairOverHead => CurrentHairMotion[CurrentFrame]["hairOverHead"];
         public CharacterConfig HairBelowBody => CurrentHairMotion[CurrentFrame]["hairBelowBody"];
-        public CharacterConfig Body => CurrentBodyMotion[CurrentFrame]["body"];
+        #endregion
         public CharacterConfig Face => CurrentFaceMotion[CurrentFaceFrame]["face"];
-        public CharacterConfig Arm => CurrentBodyMotion[CurrentFrame]["arm"];
+        #region Head
         public CharacterConfig Head => CurrentHeadMotion[CurrentFrame]["head"];
         public CharacterConfig Ear => CurrentHeadMotion[CurrentFrame]["ear"];
         public CharacterConfig LefEar => CurrentHeadMotion[CurrentFrame]["lefEar"];
         public CharacterConfig HighLefEar => CurrentHeadMotion[CurrentFrame]["highlefEar"];
+        #endregion
+        #region Body
+        public CharacterConfig Body => CurrentBodyMotion[CurrentFrame]["body"];
+        public CharacterConfig Arm => CurrentBodyMotion[CurrentFrame]["arm"];
         public CharacterConfig Hand => CurrentBodyMotion[CurrentFrame]["hand"];
         public CharacterConfig LHand => CurrentBodyMotion[CurrentFrame]["lHand"];
         public CharacterConfig RHand => CurrentBodyMotion[CurrentFrame]["rHand"];
         public CharacterConfig ArmOverHair => CurrentBodyMotion[CurrentFrame]["armOverHair"];
+        #endregion
+        #region Coat
+        public CharacterConfig Mail => CurrentCoatMotion[CurrentFrame]["mail"];
+        #endregion
+        public CharacterConfig Pants => CurrentPantsMotion[CurrentFrame]["pants"];
+
 
         public Point NeckPosition => new Point
         {
@@ -80,6 +93,16 @@ namespace WzWeb.Shared.Character
         {
             X = HeadPosition.X + Head["brow"].X - HairBelowBody["brow"].X,
             Y = HeadPosition.Y + Head["brow"].Y - HairBelowBody["brow"].Y
+        };
+        public Point MailPosition => new Point
+        {
+            X = BodyPosition.X + Body["navel"].X - Mail["navel"].X,
+            Y = BodyPosition.Y + Body["navel"].Y - Mail["navel"].Y
+        };
+        public Point PantsPosition => new Point
+        {
+            X = BodyPosition.X + Body["navel"].X - Pants["navel"].X,
+            Y = BodyPosition.Y + Body["navel"].Y - Pants["navel"].Y
         };
     }
 }

@@ -68,7 +68,6 @@ else
     protected async override Task OnInitializedAsync()
     {
         Notifier.Notify += OnNotify;
-        await GetItems();
         await CalculatePage();
     }
 

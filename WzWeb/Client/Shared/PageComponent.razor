@@ -58,9 +58,9 @@ else
     private int middlePage;
 
     #region 禁用标识
-    private bool PreviousDisabled => middlePage == 2;
+    private bool PreviousDisabled => CurrentPage == 1;
     private string PreviousDisabledClass => PreviousDisabled ? "disabled" : string.Empty;
-    private bool NextDisabled => middlePage == PageCount - 1;
+    private bool NextDisabled => CurrentPage == PageCount;
     private string NextDisabledClass => NextDisabled ? "disabled" : string.Empty;
     #endregion
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace WzWeb.Shared.Character
 {
     public abstract class BodyComponentBase
@@ -10,6 +12,7 @@ namespace WzWeb.Shared.Character
         public abstract ConfigType ConfigType { get; }
         public abstract int FormatID(string text);
         public abstract PngInfo DefaultPngInfo { get; }
+        public abstract IList<string> ExceptMotionName { get; }
 
         public BodyComponent Component { get; set; }
 
@@ -19,8 +22,14 @@ namespace WzWeb.Shared.Character
             {
                 case ConfigType.Hair:
                     return new Hair { Component = component };
+                case ConfigType.Face:
+                    return new Face { Component = component };
+                case ConfigType.Coat:
+                    return new Coat { Component = component };
+                case ConfigType.Pants:
+                    return new Pants { Component = component };
                 default:
-                    return new Hair { Component = component };
+                    throw new DataMisalignedException("未添加身体部位类型判断!");
             }
         }
 
