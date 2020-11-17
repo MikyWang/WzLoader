@@ -1,0 +1,12 @@
+﻿<div class="p-1">
+    <ul class="nav nav-pills flex-column">
+        @foreach (var item in Navs)
+        {
+            <li class="nav-item pb-1">
+                <a class="nav-link @(ActiveClass(item.Key)) d-flex justify-content-center border" href="@CommonStrings.EMPTY_LINK" @onclick="async()=>await Navigate(item.Key)">
+                    <span class="text-center text-break" style="width:1rem">@item.Value</span>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

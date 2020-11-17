@@ -18,8 +18,6 @@ namespace WzWeb.Client.Services
         public bool HasInit { get; private set; }
         public Character CurrentCharacter { get; private set; }
 
-        public string NodePath { get; set; }
-
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; } = new Dictionary<int, IDictionary<string, CharacterCollection>>();
 
         public IList<int> Skins { get; private set; }
@@ -32,6 +30,8 @@ namespace WzWeb.Client.Services
 
         public IList<IBodyComponentManager> ComponentManagers { get; set; }
 
+        public PackageManager PackageManager { get; set; }
+
         private readonly IJSRuntime jSRuntime;
         private readonly HttpClient httpClient;
 
@@ -42,6 +42,8 @@ namespace WzWeb.Client.Services
             this.jSRuntime = jSRuntime;
             this.httpClient = httpClient;
             _ = Init();
+
+            PackageManager = new PackageManager(httpClient);
 
             ComponentManagers = new List<IBodyComponentManager>
             {
@@ -62,26 +64,14 @@ namespace WzWeb.Client.Services
             }
 
         }
+        public async Task DebugInfo(object msg)
+        {
+            await jSRuntime.InvokeVoidAsync("console.log", msg.ToString());
+        }
+
         public async Task<Character> GetDefaultCharacter()
         {
-            if (CurrentFace == null)
-            {
-                await GetBodyComponentManager<Face>().GetDefaultComponent();
-            }
-
-            if (CurrentHair == null)
-            {
-                await GetBodyComponentManager<Hair>().GetDefaultComponent();
-            }
-            if (CurrentCoat == null)
-            {
-                await GetBodyComponentManager<Coat>().GetDefaultComponent();
-            }
-            if (CurrentPants == null)
-            {
-                await GetBodyComponentManager<Pants>().GetDefaultComponent();
-            }
-
+            await BodyComponentRefreshMotion();
             if (CurrentCharacter == null)
             {
                 var response = await httpClient.GetFromJsonAsync<CharacterResponse>(CommonStrings.CHARACTER);
@@ -124,6 +114,7 @@ namespace WzWeb.Client.Services
                 LoadedCharacters[id].Add(collection.HeadMotion.Name, collection);
             }
             var extcollection = LoadedCharacters[id][motionName];
+            await BodyComponentRefreshMotion(motionName, false);
             return new Character
             {
                 Id = id,
@@ -167,5 +158,21 @@ namespace WzWeb.Client.Services
             }
             return null;
         }
+
+        private async Task BodyComponentRefreshMotion(string motionName = "", bool isDefalut = true)
+        {
+            foreach (var item in ComponentManagers)
+            {
+                if (isDefalut)
+                {
+                    await item.GetDefaultComponent();
+                }
+                else
+                {
+                    await item.GetComponent(item.Current.ID, motionName);
+                }
+            }
+        }
+
     }
 }

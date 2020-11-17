@@ -25,9 +25,9 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetBodyComponent")]
-        public BodyComponent GetBodyComponent(BodyComponent bodyComponent)
+        public BodyComponent GetBodyComponent([FromBody] BodyComponent bodyComponent, [FromQuery] bool isDefault = true)
         {
-            return bodyComponetService.GetBodyComponent(bodyComponent);
+            return bodyComponetService.GetBodyComponent(bodyComponent, isDefault);
         }
 
         [HttpPost("GetBodyComponentList")]

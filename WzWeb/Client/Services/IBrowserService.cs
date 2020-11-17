@@ -11,7 +11,6 @@ namespace WzWeb.Client.Services
     {
         public BrowserConfig Config { get; }
         public bool HasInit { get; }
-        public string NodePath { get; set; }
         public IDictionary<int, IDictionary<string, CharacterCollection>> LoadedCharacters { get; set; }
         public IList<int> Skins { get; }
         public IList<string> Actions { get; }
@@ -21,8 +20,10 @@ namespace WzWeb.Client.Services
         public BodyComponent CurrentFace { get; }
         public BodyComponent CurrentCoat { get; }
         public IList<IBodyComponentManager> ComponentManagers { get; set; }
+        public PackageManager PackageManager { get; set; }
         #endregion
         public Task Init();
+        public Task DebugInfo(object msg);
         public Task<Character> GetCharacterAsync(int id, string MotionName, int Frame);
         public Task<Character> LoadingCharacterAsync(int id, string motionName, int frame);
         public Task<Character> GetDefaultCharacter();

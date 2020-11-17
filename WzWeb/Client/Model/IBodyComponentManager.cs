@@ -19,6 +19,7 @@ namespace WzWeb.Client.Model
 
         public Task<BodyComponent> GetDefaultComponent();
         public Task<IDictionary<int, BodyComponent>> GetBodyComponentList(int number);
+        public Task<BodyComponent> GetComponent(int id, string motionName);
 
         public BodyComponent this[int key] => Components.ContainsKey(key) ? Components[key] : null;
         public bool PageEnoughed => (CurrentPage + 1) * PageItemCount < Components.Count;

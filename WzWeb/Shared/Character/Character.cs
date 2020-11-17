@@ -26,6 +26,8 @@ namespace WzWeb.Shared.Character
         public CharacterConfig Hair => CurrentHairMotion[CurrentFrame]["hair"];
         public CharacterConfig HairOverHead => CurrentHairMotion[CurrentFrame]["hairOverHead"];
         public CharacterConfig HairBelowBody => CurrentHairMotion[CurrentFrame]["hairBelowBody"];
+        public CharacterConfig BackHair => CurrentHairMotion[CurrentFrame]["backHair"];
+        public CharacterConfig BackHairBelowCap => CurrentHairMotion[CurrentFrame]["backHairBelowCap"];
         #endregion
         public CharacterConfig Face => CurrentFaceMotion[CurrentFaceFrame]["face"];
         #region Head
@@ -93,6 +95,16 @@ namespace WzWeb.Shared.Character
         {
             X = HeadPosition.X + Head["brow"].X - HairBelowBody["brow"].X,
             Y = HeadPosition.Y + Head["brow"].Y - HairBelowBody["brow"].Y
+        };
+        public Point BackHairPosition => new Point
+        {
+            X = HeadPosition.X + Head["brow"].X - BackHair["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - BackHair["brow"].Y
+        };
+        public Point BackHairBelowCapPosition => new Point
+        {
+            X = HeadPosition.X + Head["brow"].X - BackHairBelowCap["brow"].X,
+            Y = HeadPosition.Y + Head["brow"].Y - BackHairBelowCap["brow"].Y
         };
         public Point MailPosition => new Point
         {

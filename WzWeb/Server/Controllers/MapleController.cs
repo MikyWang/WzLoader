@@ -17,11 +17,14 @@ namespace WzWeb.Server.Controllers
     {
         private readonly IWzLoader wzLoader;
         private readonly ILogger<MapleController> logger;
+        private readonly object lockObject = new object();
+        private readonly INodeService nodeService;
 
-        public MapleController(ILogger<MapleController> logger, IWzLoader wzLoader)
+        public MapleController(ILogger<MapleController> logger, IWzLoader wzLoader, INodeService nodeService)
         {
             this.logger = logger;
             this.wzLoader = wzLoader;
+            this.nodeService = nodeService;
         }
 
         [HttpGet("GetNode")]
@@ -33,14 +36,23 @@ namespace WzWeb.Server.Controllers
         }
 
         [HttpPost("GetNodeList")]
-        public NodeListResponse GetNodeList(NodeListRequest req)
+        public ListResponse<Node> GetNodeList(ListRequest<Node> req)
         {
-            var node = req.Node;
-            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
-            var resp = new NodeListResponse();
-            resp.Nodes = wz_Node.Nodes.Select(node => node.ToNode()).Skip(req.Start).Take(req.Num).ToList();
-            resp.HasNext = resp.Nodes.Count == req.Num;
-            return resp;
+            lock (lockObject)
+            {
+                var node = req.Parameter;
+                var wz_Node = node.ToWzNode(wzLoader.BaseNode);
+                var resp = new ListResponse<Node>();
+                resp.Results = wz_Node.Nodes.Select(node => node.ToNode()).Skip(req.Start).Take(req.Num).ToList();
+                resp.HasNext = resp.Results.Count == req.Num;
+                return resp;
+            }
+        }
+
+        [HttpPost("GetNodeProps")]
+        public IDictionary<string, string> GetNodeProps(Node node)
+        {
+            return nodeService.GetNodeProperties(node);
         }
 
         [HttpPost("GetFileInfo")]
@@ -54,9 +66,11 @@ namespace WzWeb.Server.Controllers
         [HttpPost("GetPng")]
         public PngInfo GetPng(Node node)
         {
-            var wz_Node = node.ToWzNode(wzLoader.BaseNode);
-            var wz_png = wz_Node.GetValue<Wz_Png>();
-            return wz_png.ToPngInfo();
+            lock (lockObject)
+            {
+                var wz_Node = node.ToWzNode(wzLoader.BaseNode);
+                return wz_Node.GetPngInfo(wzLoader.BaseNode);
+            }
         }
 
         [HttpPost("GetUol")]

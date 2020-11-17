@@ -1,0 +1,21 @@
+﻿<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <div class="d-flex flex-column justify-content-start align-items-stretch overflow-auto" style="max-height:15rem;min-height:5rem">
+        @foreach (var item in Items)
+        {
+            <dl class="d-flex flex-row justify-content-start align-items-stretch border-bottom">
+                <dt class=" text-break px-2" style="width:5rem">@item.Key</dt>
+                @if (item.Value.StartsWith("link:"))
+                {
+                    var value = item.Value.Split("link:")[1];
+                    <dd class=" text-break px-2" style="max-width:5rem">
+                        <a href="@(CommonStrings.EMPTY_LINK)" @onclick="async()=>await Navigate(value)">@value</a>
+                    </dd>
+                }
+                else
+                {
+                    <dd class=" text-break px-2" style="max-width:5rem">@item.Value</dd>
+                }
+            </dl>
+        }
+    </div>
+</SpinnerContainer>

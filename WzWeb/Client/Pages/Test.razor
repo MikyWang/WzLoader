@@ -1,0 +1,36 @@
+﻿@page "/test"
+
+<div class="d-flex flex-row justify-content-start align-items-stretch">
+    <div class="p-1">
+        <ul class="nav nav-pills flex-column">
+            @{
+                var items = new List<string> { "脸型", "发型", "上衣", "裤子", "连体衣" };
+                foreach (var item in items)
+                {
+                    <li class="nav-item pb-1">
+                        <a class="nav-link active d-flex justify-content-center" href="#">
+                            <span class="text-center text-break" style="width:1rem">@item</span>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div>
+        @if (FaceManager != null)
+        {
+            <BodyPartComponent Manager="FaceManager"></BodyPartComponent>
+        }
+    </div>
+</div>
+
+@code{
+
+    private IBodyComponentManager FaceManager;
+
+    protected override void OnInitialized()
+    {
+        FaceManager = BrowserService.GetBodyComponentManager<Face>();
+    }
+
+}

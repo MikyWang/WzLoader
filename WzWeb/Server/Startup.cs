@@ -28,6 +28,7 @@ namespace WzWeb.Server
             services.AddSingleton<IWzLoader, WzLoader>();
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IBodyComponetService, BodyComponentService>();
+            services.AddScoped<INodeService, NodeService>();
             services.AddRazorPages();
         }
 

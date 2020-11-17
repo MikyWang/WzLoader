@@ -1,0 +1,15 @@
+﻿<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @for (int i = 0; i < Links.Count - 1; i++)
+            {
+                var index = i;
+                <li class="breadcrumb-item"><a href="@(CommonStrings.EMPTY_LINK)" @onclick="()=> Navigate(index)">@Links[index]</a></li>
+            }
+            <li class="breadcrumb-item active" aria-current="page">@Links[Links.Count - 1]</li>
+        </ol>
+    </nav>
+</SpinnerContainer>
+
+
+

@@ -1,0 +1,10 @@
+﻿<form class="form-inline">
+    @if (HasNext)
+    {
+        <input class="form-control" type="search" placeholder="正在加载节点..." aria-label="Search" value=@searchText readonly>
+    }
+    else
+    {
+        <input class="form-control" type="search" placeholder="搜索节点" aria-label="Search" value=@searchText @oninput="(e)=>Search(e.Value.ToString())">
+    }
+</form>

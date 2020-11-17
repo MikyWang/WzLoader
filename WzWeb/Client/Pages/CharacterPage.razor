@@ -1,0 +1,198 @@
+﻿@page "/character"
+@using Blazor.Extensions.Canvas.Canvas2D
+@using System.Drawing
+@using System.Threading
+@inject INotifierService Notifier
+
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <div class="d-none">
+        <img src="data:image/png;base64,@(character.Head.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Head.PngInfo.Width + "px");height:@(character.Head.PngInfo.Height + "px")" @ref="HeadRef" />
+        <img src="data:image/png;base64,@(character.Body.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Body.PngInfo.Width + "px");height:@(character.Body.PngInfo.Height + "px")" @ref="BodyRef" />
+        <img src="data:image/png;base64,@(character.Face.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Face.PngInfo.Width + "px");height:@(character.Face.PngInfo.Height + "px")" @ref="FaceRef" />
+        @switch (character.EarType)
+        {
+            case EarType.Ear:
+                <img src="data:image/png;base64,@(character.Ear.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Ear.PngInfo.Width + "px");height:@(character.Ear.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            case EarType.LefEar:
+                <img src="data:image/png;base64,@(character.LefEar.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.LefEar.PngInfo.Width + "px");height:@(character.LefEar.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            case EarType.HighLefEar:
+                <img src="data:image/png;base64,@(character.HighLefEar.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HighLefEar.PngInfo.Width + "px");height:@(character.HighLefEar.PngInfo.Height + "px")" @ref="EarRef" />
+                break;
+            default:
+                break;
+        }
+        @if (character.Arm != null)
+        {
+            <img src="data:image/png;base64,@(character.Arm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Arm.PngInfo.Width + "px");height:@(character.Arm.PngInfo.Height + "px")" @ref="ArmRef" />
+        }
+        @if (character.Hand != null)
+        {
+            <img src="data:image/png;base64,@(character.Hand.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Hand.PngInfo.Width + "px");height:@(character.Hand.PngInfo.Height + "px")" @ref="HandRef" />
+        }
+        @if (character.Hair != null)
+        {
+            <img src="data:image/png;base64,@(character.Hair.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Hair.PngInfo.Width + "px");height:@(character.Hair.PngInfo.Height + "px")" @ref="HairRef" />
+        }
+        @if (character.HairOverHead != null)
+        {
+            <img src="data:image/png;base64,@(character.HairOverHead.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HairOverHead.PngInfo.Width + "px");height:@(character.HairOverHead.PngInfo.Height + "px")" @ref="HairOverHeadRef" />
+        }
+        @if (character.HairBelowBody != null)
+        {
+            <img src="data:image/png;base64,@(character.HairBelowBody.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.HairBelowBody.PngInfo.Width + "px");height:@(character.HairBelowBody.PngInfo.Height + "px")" @ref="HairBelowBodyRef" />
+        }
+        @if (character.BackHair != null)
+        {
+            <img src="data:image/png;base64,@(character.BackHair.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.BackHair.PngInfo.Width + "px");height:@(character.BackHair.PngInfo.Height + "px")" @ref="BackHairRef" />
+        }
+        @if (character.BackHairBelowCap != null)
+        {
+            <img src="data:image/png;base64,@(character.BackHairBelowCap.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.BackHairBelowCap.PngInfo.Width + "px");height:@(character.BackHairBelowCap.PngInfo.Height + "px")" @ref="BackHairBelowCapRef" />
+        }
+        @if (character.Mail != null)
+        {
+            <img src="data:image/png;base64,@(character.Mail.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Mail.PngInfo.Width + "px");height:@(character.Mail.PngInfo.Height + "px")" @ref="MailRef" />
+        }
+        @if (character.Pants != null)
+        {
+            <img src="data:image/png;base64,@(character.Pants.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Pants.PngInfo.Width + "px");height:@(character.Pants.PngInfo.Height + "px")" @ref="PantsRef" />
+        }
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-stretch">
+        <div class="p-2 w-100">
+            <div class="d-flex flex-row">
+                <div class="p-2 ">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">角色皮肤</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" style="width:150px" @onchange="ChangeSkin">
+                            @for (int i = 0; i < Skins.Count; i++)
+                            {
+                                var index = i;
+                                if (index == 0)
+                                {
+                                    <option value="@Skins[index]">@Skins[index]</option>
+                                }
+                                else
+                                {
+                                    <option value="@Skins[index]">@Skins[index]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">角色动作</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeAction">
+                            @for (int i = 0; i < Actions.Count; i++)
+                            {
+                                var index = i;
+                                if (index == 0)
+                                {
+                                    <option value="@Actions[index]">@Actions[index]</option>
+                                }
+                                else
+                                {
+                                    <option value="@Actions[index]">@Actions[index]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">当前帧</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @bind="CurrentFrame">
+                            @for (int i = 0; i < Frames.Count; i++)
+                            {
+                                var index = i;
+                                if (index == 0)
+                                {
+                                    <option value="@Frames[index]">@Frames[index]</option>
+                                }
+                                else
+                                {
+                                    <option value="@Frames[index]">@Frames[index]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">角色耳朵</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" style="width:150px;" @onchange="ChangeEar">
+                            @{
+                                var names = (EarType[])Enum.GetValues(typeof(EarType));
+                                @for (int i = 0; i < names.Length; i++)
+                                {
+                                    var index = i;
+                                    <option value="@((int)names[index])">@names[index].ToString()</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 w-100">
+            <div class="d-flex flex-row justify-content-start align-items-stretch">
+                <div class="p-2">
+                    <div class="d-flex flex-row justify-content-start align-items-stretch">
+                        <div>
+                            <BodyPartNav @bind-CurrentNav="currentNavConfigType" NavigateCB="ChangeBodyNav"></BodyPartNav>
+                        </div>
+                        <div>
+                            <BodyPartComponent @bind-Manager="BodyManager"></BodyPartComponent>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 flex-fill">
+                    <div class="h-100 d-flex flex-column justify-content-center align-items-stretch">
+                        <div class="p-2 align-self-center">
+                            <BECanvas Width="150" Height="150" @ref="canvasReference"></BECanvas>
+                        </div>
+                        <div class="p-2">
+                            @if (loading)
+                            {
+                                <div class="d-flex flex-row justify-content-center align-items-center">
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" disabled>播放帧动画</button>
+                                    </div>
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" disabled>停止播放</button>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-row  justify-content-center align-items-center">
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-primary" @onclick="PlayAnimation">播放帧动画</button>
+                                    </div>
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-danger" @onclick="StopAnimation">停止播放</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</SpinnerContainer>

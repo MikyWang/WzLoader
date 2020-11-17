@@ -21,7 +21,8 @@ namespace WzWeb.Server.Extentions
                 Text = wz_Node.Text,
                 Value = wz_Node.Value?.ToString(),
                 FullPathToFile = wz_Node.FullPathToFile,
-                Type = wz_Node.GetNodeType()
+                Type = wz_Node.GetNodeType(),
+                parent = wz_Node.ParentNode?.ToNode()
             };
         }
         public static NodeType GetNodeType(this Wz_Node wz_Node)
@@ -75,6 +76,35 @@ namespace WzWeb.Server.Extentions
                 }
             }
             return wz_Node;
+        }
+
+        public static string GetValueString(this Wz_Node node)
+        {
+            var type = node.GetNodeType();
+            string value;
+            switch (type)
+            {
+                case Shared.NodeType.Wz_Uol:
+                    var target = node.GetValue<Wz_Uol>().HandleUol(node);
+                    value = $"link:{target.FullPathToFile}";
+                    break;
+                case Shared.NodeType.Wz_Vector:
+                    var point = node.GetValue<Wz_Vector>();
+                    value = $"({point.X},{point.Y})";
+                    break;
+                case Shared.NodeType.Wz_Normal:
+                    value = node.Value.ToString();
+                    break;
+                case Shared.NodeType.Wz_Null:
+                case Shared.NodeType.Wz_File:
+                case Shared.NodeType.Wz_Image:
+                case Shared.NodeType.Wz_Sound:
+                case Shared.NodeType.Wz_Png:
+                default:
+                    value = $"link:{node.FullPathToFile}";
+                    break;
+            }
+            return value;
         }
 
         public static Wz_Node SearchNode(this Wz_Node wz_Node, string fullPathToFile)
@@ -217,10 +247,10 @@ namespace WzWeb.Server.Extentions
             {
                 configs.Add(acNode.Text, acNode.GetCharacterConfig(baseNode));
             }
-
+            int.TryParse(wz_Node.Text, out var id);
             return new CharacterAction
             {
-                Id = int.Parse(wz_Node.Text),
+                Id = id,
                 Configs = configs,
                 Delay = wz_Node.Nodes["delay"]?.Value.ToString(),
                 HasFace = wz_Node.Nodes["face"]?.Value.ToString()

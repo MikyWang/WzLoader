@@ -26,41 +26,46 @@ namespace WzWeb.Server.Services
 
         public BodyComponent GetBodyComponent(BodyComponent bodyComponent, bool isDefault = true)
         {
-
-            Wz_Node compNode;
-            Wz_Node compStringNode;
-
-            var actComponent = BodyComponentBase.GetActuallyComponent(bodyComponent);
-
-
-            compNode = CharacterNode.SearchNode(actComponent.BaseNodePath);
-            compStringNode = StringNode.SearchNode(actComponent.BaseStringNodePath);
-
-            if (isDefault)
+            lock (_lock)
             {
-                bodyComponent.ID = actComponent.DefaultID;
+                Wz_Node compNode;
+                Wz_Node compStringNode;
+
+                var actComponent = BodyComponentBase.GetActuallyComponent(bodyComponent);
+
+                compNode = CharacterNode.SearchNode(actComponent.BaseNodePath);
+                compStringNode = StringNode.SearchNode(actComponent.BaseStringNodePath);
+
+                if (isDefault)
+                {
+                    bodyComponent.ID = actComponent.DefaultID;
+                    bodyComponent.MotionName = actComponent.DefaultMotionName;
+                }
+
+                var node = compNode.Nodes.First(nd => actComponent.FormatID(nd.Text) == bodyComponent.ID).GetImageNode();
+                var motionNode = node.SearchNode(bodyComponent.MotionName);
+                var stringNode = compStringNode.SearchNode(bodyComponent.ID.ToString());
+                string name;
+                if (stringNode == null)
+                {
+                    name = null;
+                }
+                else if (stringNode.Nodes["name"] == null)
+                {
+                    name = $"{stringNode.Text}:{stringNode.Value}";
+                }
+                else
+                {
+                    name = stringNode.Nodes["name"].Value.ToString();
+                }
+
+                bodyComponent.Name = name;
+                bodyComponent.Info = node.GetCharacterInfo(CharacterNode);
+
+                bodyComponent.Motion = motionNode?.GetCharacterMotion(CharacterNode, bodyComponent.ConfigType);
+                return bodyComponent;
             }
 
-            var node = compNode.Nodes.First(nd => actComponent.FormatID(nd.Text) == bodyComponent.ID).GetImageNode();
-            var stringNode = compStringNode.SearchNode(bodyComponent.ID.ToString());
-            string name;
-            if (stringNode == null)
-            {
-                name = null;
-            }
-            else if (stringNode.Nodes["name"] == null)
-            {
-                name = $"{stringNode.Text}:{stringNode.Value}";
-            }
-            else
-            {
-                name = stringNode.Nodes["name"].Value.ToString();
-            }
-            bodyComponent.Name = name;
-            bodyComponent.Info = node.GetCharacterInfo(CharacterNode);
-            var motionNode = node.SearchNode(actComponent.DefaultMotionName);
-            bodyComponent.Motion = motionNode.GetCharacterMotion(CharacterNode, bodyComponent.ConfigType);
-            return bodyComponent;
 
         }
 
@@ -79,7 +84,8 @@ namespace WzWeb.Server.Services
                         var comp = new BodyComponent
                         {
                             ID = actComponent.FormatID(nd.Text),
-                            ConfigType = actComponent.ConfigType
+                            ConfigType = actComponent.ConfigType,
+                            MotionName = actComponent.DefaultMotionName
                         };
                         return GetBodyComponent(comp, false);
                     }).ToList()

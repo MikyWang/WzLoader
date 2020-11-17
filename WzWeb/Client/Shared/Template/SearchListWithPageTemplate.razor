@@ -2,22 +2,18 @@
 
 @inject INotifierService Notifier
 @implements IDisposable
+@implements IDisplaySpinner
 
-@if (CurrentItems == null)
-{
-    <Loading></Loading>
-}
-else
-{
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
     <div class="card">
         <div class="card-header">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="搜索..." value="@searchText" aria-label="Search" @oninput="()=>Search(searchText)" style="width:9.5rem">
-                <button class="btn btn-success my-2 my-sm-0" type="button" @onclick="()=>SearchFromServer(searchText)">全局搜索</button>
+            <form class="form-inline justify-content-start">
+                <input class="form-control flex-fill mr-2" type="search" placeholder="搜索..." value="@searchText" aria-label="Search" @oninput="()=>Search(searchText)" style="width:9.5rem">
+                <button class="btn btn-success" type="button" @onclick="()=>SearchFromServer(searchText)">全局搜索</button>
             </form>
         </div>
         <FixedHeightTemplate Percentage="50">
-            <div class="card-body " style="padding:0rem">
+            <div class="card-body" style="padding:0rem">
                 <div class="list-group list-group-flush">
                     @foreach (var item in CurrentItems)
                     {
@@ -28,9 +24,7 @@ else
         </FixedHeightTemplate>
     </div>
     <PageComponent PageCount="PageCount" @bind-CurrentPage="currentPage"></PageComponent>
-}
-
-
+</SpinnerContainer>
 
 @code {
 
@@ -42,6 +36,8 @@ else
     public int PageCount { get; set; }
     [Parameter]
     public RenderFragment<TItem> ItemTemplate { get; set; }
+
+    public bool DisplaySpinner => CurrentItems == null;
 
     [Parameter]
     public Func<Task> CalculatePage { get; set; }

@@ -19,4 +19,21 @@
   <ItemGroup>
     <ProjectReference Include="..\Shared\WzWeb.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Shared\Template\" />
+    <Folder Include="Shared\Component\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Shared\Component\FileTable.razor" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <StandardHeader Text="" IncludeInNewFiles="True" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

@@ -1,0 +1,33 @@
+﻿@page "/package"
+
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <BreadCrumbComponent @bind-Path="Manager.NodePath" NavigateCB="NavigateCB"></BreadCrumbComponent>
+    <div class="d-flex flex-row">
+        <div class="p-2">
+            <FullListTemplate @bind-Items="searchItems" ListSizePercentage="68">
+                <HeaderTemplate>
+                    <LocalSearchComponent @ref="searchCompRef" Search="SearchNode" HasNext="hasNext"></LocalSearchComponent>
+                </HeaderTemplate>
+                <ItemTemplate Context="item">
+                    <a href="@(CommonStrings.EMPTY_LINK)" @onclick="()=>Navigate(item.Value)" class="list-group-item list-group-item-action text-primary text-break" style="width:14.5rem">
+                        @(item.Key)
+                    </a>
+                </ItemTemplate>
+            </FullListTemplate>
+        </div>
+        <div class="p-2 d-flex flex-column flex-fill justify-content-center">
+            @if (IsMedia)
+            {
+                <MediaTemplate @bind-Components="mediaComponents">
+                    <Body Context="item">
+                        <PropertiesComponent @bind-Node="item" NavigateCB="Navigate"></PropertiesComponent>
+                    </Body>
+                </MediaTemplate>
+            }
+            else
+            {
+                <h5 class="text-secondary text-center">非素材节点</h5>
+            }
+        </div>
+    </div>
+</SpinnerContainer>

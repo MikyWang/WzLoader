@@ -1,0 +1,27 @@
+﻿@typeparam TItem
+
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <FixedHeightTemplate Percentage="68">
+        <ul class="list-unstyled d-flex  flex-row flex-wrap overflow-auto">
+            @foreach (var item in Components)
+            {
+                <li class="media m-2 d-flex justify-content-center align-content-stretch border">
+                    <div class="h-100 border-right d-flex justify-content-center" style="min-width:64px;">
+                        @if (item.PngInfo != null)
+                        {
+                            <img class="align-self-center" src="@($"data:image/png;base64,{item.PngInfo.Base64Data}")" style="max-width:38rem">
+                        }
+                        else
+                        {
+                            <span class="align-self-center text-secondary text-break" style="width:1rem">非素材资源</span>
+                        }
+                    </div>
+                    <div class="media-body" style="min-height:64px;min-width:64px">
+                        <h5 class="p-2 border-bottom text-info" style="min-width:10rem">@item.Title</h5>
+                        @Body(item.Body)
+                    </div>
+                </li>
+            }
+        </ul>
+    </FixedHeightTemplate>
+</SpinnerContainer>

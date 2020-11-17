@@ -39,6 +39,7 @@ namespace WzWeb.Shared.Character
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public string MotionName { get; set; }
         public CharacterInfo Info { get; set; }
         public CharacterMotion Motion { get; set; }
         public ConfigType ConfigType { get; set; }

@@ -1,0 +1,20 @@
+﻿@inject INotifierService Notifier
+
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <SearchListWithPageTemplate @bind-CurrentItems="componentList" @bind-CurrentPage="Manager.CurrentPage" CalculatePage="CalculatePage" GetItems="GetItems" PageCount="Manager.PageCount" Search="Search" SearchFromServer="SearchFromServer">
+        <ItemTemplate Context="component">
+            <div class="list-group-item list-group-item-action d-flex flex-row justify-content-around align-items-center @(IsActive(component))" @onclick="(async(e)=>{await ChooseComponent(component);})">
+                <div class="p-2">
+                    @{
+                        var pngInfo = BodyComponentBase.GetActuallyComponent(component).DefaultPngInfo;
+                        <img src="data:image/png;base64,@(pngInfo.Base64Data)" class="card-img" alt="..." width="@($"{pngInfo.Width}px")" height="@($"{pngInfo.Width}px")">
+                    }
+                </div>
+                <div>
+                    <h5 class="card-title">@component.ID</h5>
+                    <p class="card-text">@component.Name</p>
+                </div>
+            </div>
+        </ItemTemplate>
+    </SearchListWithPageTemplate>
+</SpinnerContainer>

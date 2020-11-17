@@ -17,7 +17,7 @@ namespace WzWeb.Client.Model
         public IDictionary<int, BodyComponent> Components { get; set; }
 
         public int CurrentPage { get; set; } = 1;
-        public int PageItemCount { get; set; } = 10;
+        public int PageItemCount { get; set; } = 5;
         public bool HasNext { get; private set; } = true;
         public bool PageEnoughed => (CurrentPage + 1) * PageItemCount < Components.Count;
 
@@ -29,6 +29,7 @@ namespace WzWeb.Client.Model
         public BodyComponentManager(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+            Components = new Dictionary<int, BodyComponent>();
         }
 
         public async Task<BodyComponent> GetDefaultComponent()
@@ -39,6 +40,21 @@ namespace WzWeb.Client.Model
             var component = new BodyComponent { ConfigType = componentBase.ConfigType };
             var resp = await httpClient.PostAsJsonAsync(CommonStrings.BODY_POST_COMPONENT, component);
             Current = await resp.Content.ReadFromJsonAsync<BodyComponent>();
+            return Current;
+        }
+
+        public async Task<BodyComponent> GetComponent(int id, string motionName)
+        {
+            var componentBase = new T();
+            var component = new BodyComponent
+            {
+                ID = id,
+                ConfigType = componentBase.ConfigType,
+                MotionName = motionName
+            };
+            var resp = await httpClient.PostAsJsonAsync($"{CommonStrings.BODY_POST_COMPONENT}?isDefault=false", component);
+            var result = await resp.Content.ReadFromJsonAsync<BodyComponent>();
+            Current = (result?.Motion == null) ? Current : result;
             return Current;
         }
 

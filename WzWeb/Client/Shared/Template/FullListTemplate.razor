@@ -1,0 +1,20 @@
+﻿@typeparam TIndex
+@typeparam TItem
+
+<SpinnerContainer DisplaySpinner="DisplaySpinner">
+    <div class="card">
+        <div class="card-header">
+            @HeaderTemplate
+        </div>
+        <FixedHeightTemplate Percentage="@ListSizePercentage">
+            <div class="card-body " style="padding:0rem">
+                <div class="list-group list-group-flush">
+                    @foreach (var item in Items)
+                    {
+                        @ItemTemplate(item)
+                    }
+                </div>
+            </div>
+        </FixedHeightTemplate>
+    </div>
+</SpinnerContainer>
