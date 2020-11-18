@@ -46,6 +46,7 @@ namespace WzWeb.Shared.Character
         #endregion
         #region Coat
         public CharacterConfig Mail => CurrentCoatMotion[CurrentFrame]["mail"];
+        public CharacterConfig MailArm => CurrentCoatMotion[CurrentFrame]["mailArm"];
         #endregion
         public CharacterConfig Pants => CurrentPantsMotion[CurrentFrame]["pants"];
 
@@ -110,6 +111,11 @@ namespace WzWeb.Shared.Character
         {
             X = BodyPosition.X + Body["navel"].X - Mail["navel"].X,
             Y = BodyPosition.Y + Body["navel"].Y - Mail["navel"].Y
+        };
+        public Point MailArmPosition => new Point
+        {
+            X = BodyPosition.X + Body["navel"].X - MailArm["navel"].X,
+            Y = BodyPosition.Y + Body["navel"].Y - MailArm["navel"].Y
         };
         public Point PantsPosition => new Point
         {

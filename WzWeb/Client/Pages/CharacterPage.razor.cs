@@ -37,6 +37,7 @@ namespace WzWeb.Client.Pages
         private ElementReference PantsRef;
         private ElementReference BackHairRef;
         private ElementReference BackHairBelowCapRef;
+        private ElementReference MailArmRef;
         #endregion
 
         #region 后台数据
@@ -220,6 +221,7 @@ namespace WzWeb.Client.Pages
                 await context.DrawImageAsync(MailRef, drawPosition.X, drawPosition.Y);
             }
 
+
             drawPosition = CalculateDrawPosition(character.HeadPosition, character.Head);
             await context.DrawImageAsync(HeadRef, drawPosition.X, drawPosition.Y);
 
@@ -254,7 +256,6 @@ namespace WzWeb.Client.Pages
                 await context.DrawImageAsync(BackHairBelowCapRef, drawPosition.X, drawPosition.Y);
             }
 
-
             if (character.Pants != null)
             {
                 drawPosition = CalculateDrawPosition(character.PantsPosition, character.Pants);
@@ -269,6 +270,11 @@ namespace WzWeb.Client.Pages
             {
                 drawPosition = CalculateDrawPosition(character.HandPosition, character.Hand);
                 await context.DrawImageAsync(HandRef, drawPosition.X, drawPosition.Y);
+            }
+            if (character.MailArm != null)
+            {
+                drawPosition = CalculateDrawPosition(character.MailArmPosition, character.MailArm);
+                await context.DrawImageAsync(MailArmRef, drawPosition.X, drawPosition.Y);
             }
 
         }

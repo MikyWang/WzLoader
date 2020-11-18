@@ -55,6 +55,10 @@
         {
             <img src="data:image/png;base64,@(character.Mail.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Mail.PngInfo.Width + "px");height:@(character.Mail.PngInfo.Height + "px")" @ref="MailRef" />
         }
+        @if (character.MailArm != null)
+        {
+            <img src="data:image/png;base64,@(character.MailArm.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.MailArm.PngInfo.Width + "px");height:@(character.MailArm.PngInfo.Height + "px")" @ref="MailArmRef" />
+        }
         @if (character.Pants != null)
         {
             <img src="data:image/png;base64,@(character.Pants.PngInfo.Base64Data)" class="card-img" alt="..." style="width:@(character.Pants.PngInfo.Width + "px");height:@(character.Pants.PngInfo.Height + "px")" @ref="PantsRef" />
