@@ -1,1 +1,1 @@
-[可爱发电赞助我](https://afdian.net/@milkspun_MapleStory)
+为我充电→[https://afdian.net/@milkspun_MapleStory](https://afdian.net/@milkspun_MapleStory)
