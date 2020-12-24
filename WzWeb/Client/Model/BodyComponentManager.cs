@@ -17,7 +17,7 @@ namespace WzWeb.Client.Model
         public IDictionary<int, BodyComponent> Components { get; set; }
 
         public int CurrentPage { get; set; } = 1;
-        public int PageItemCount { get; set; } = 5;
+        public int PageItemCount { get; set; } = 10;
         public bool HasNext { get; private set; } = true;
         public bool PageEnoughed => (CurrentPage + 1) * PageItemCount < Components.Count;
 

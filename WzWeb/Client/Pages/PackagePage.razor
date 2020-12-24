@@ -3,13 +3,13 @@
 <SpinnerContainer DisplaySpinner="DisplaySpinner">
     <BreadCrumbComponent @bind-Path="Manager.NodePath" NavigateCB="NavigateCB"></BreadCrumbComponent>
     <div class="d-flex flex-row">
-        <div class="p-2">
+        <div class="p-2 w-25">
             <FullListTemplate @bind-Items="searchItems" ListSizePercentage="68">
                 <HeaderTemplate>
                     <LocalSearchComponent @ref="searchCompRef" Search="SearchNode" HasNext="hasNext"></LocalSearchComponent>
                 </HeaderTemplate>
                 <ItemTemplate Context="item">
-                    <a href="@(CommonStrings.EMPTY_LINK)" @onclick="()=>Navigate(item.Value)" class="list-group-item list-group-item-action text-primary text-break" style="width:14.5rem">
+                    <a href="@(CommonStrings.EMPTY_LINK)" @onclick="()=>Navigate(item.Value)" class="list-group-item list-group-item-action text-primary text-break">
                         @(item.Key)
                     </a>
                 </ItemTemplate>

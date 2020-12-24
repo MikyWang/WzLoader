@@ -31,7 +31,7 @@ namespace WzWeb.Client.Pages
         //                        || x.Value.Type == NodeType.Wz_Image
         //                        || x.Value.Type == NodeType.Wz_Null);
 
-        public bool IsMedia => currentNode?.Type == NodeType.Wz_Null && searchItems.Any(item => item.Value.Type != NodeType.Wz_Null);
+        public bool IsMedia => (currentNode?.Type == NodeType.Wz_Null && searchItems.Any(item => item.Value.Type != NodeType.Wz_Null))||(currentNode?.Type==NodeType.Wz_Image&&searchItems.All(item=>item.Value.Type!=NodeType.Wz_Image));
 
         protected async override Task OnInitializedAsync()
         {
